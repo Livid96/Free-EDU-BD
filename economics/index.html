@@ -26,7 +26,7 @@
             z-index: -2;
         }
 
-        /* --- GLOBAL NAVIGATION --- */
+        /* --- NAVIGATION --- */
         nav {
             position: sticky; top: 15px; z-index: 1000;
             max-width: 1200px; margin: 10px auto; padding: 15px 25px;
@@ -44,9 +44,7 @@
             font-size: 0.85rem; 
             letter-spacing: 3px; 
             color: var(--accent); 
-            transition: 0.3s;
         }
-        .logo-link:hover .logo { filter: brightness(1.3); }
 
         .search-container { flex: 1; max-width: 450px; order: 2; margin: 0 20px; }
         .search-bar {
@@ -62,80 +60,75 @@
             padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.7rem;
             transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
         }
-        .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
 
-        /* --- YEAR TABS --- */
+        /* --- TABS: FIXED ONE-ROW ON MOBILE --- */
         .tabs-container {
             display: flex; justify-content: center; gap: 10px; margin: 60px auto 40px;
-            flex-wrap: wrap; padding: 0 20px;
+            padding: 0 20px; overflow-x: auto; 
+            white-space: nowrap; 
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .tabs-container::-webkit-scrollbar { display: none; }
+
         .tab-btn {
             background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-dim);
             padding: 14px 28px; border-radius: 18px; cursor: pointer; transition: 0.4s;
-            font-weight: 600; font-size: 0.9rem;
+            font-weight: 600; font-size: 0.9rem; flex-shrink: 0;
         }
         .tab-btn.active {
             background: var(--accent); color: white; border-color: var(--accent);
             box-shadow: 0 10px 25px rgba(58, 134, 255, 0.3);
         }
 
-        /* --- SUBJECT GRID --- */
+        /* --- SUBJECT GRID & CARDS --- */
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 80px; }
-        
-        .subject-grid { 
-            display: grid; gap: 20px; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        }
+        .subject-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 
         .subject-card {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            padding: 40px 25px; border-radius: 28px; text-align: center;
+            position: relative; background: var(--glass); border: 1px solid var(--glass-border);
+            padding: 60px 25px; border-radius: 28px; text-align: center;
             transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            cursor: pointer; text-decoration: none; color: white;
+            cursor: pointer; text-decoration: none; color: white; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .subject-card:hover { 
-            transform: translateY(-8px); border-color: var(--accent); 
-            background: rgba(255,255,255,0.05); 
+
+        .subject-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--bg-img); background-size: cover; background-position: center;
+            opacity: 0.15; z-index: 0; transition: 0.5s ease;
         }
+        .subject-card:hover::before { opacity: 0.25; transform: scale(1.1); }
+        .subject-card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(10, 20, 40, 0.5); }
         
-        .subject-card h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 600; }
-        .subject-card span { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.7; }
+        .subject-card h3, .subject-card span { position: relative; z-index: 1; }
+        .subject-card h3 { font-size: 1.2rem; margin-bottom: 8px; font-weight: 600; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .subject-card span { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
 
         .hidden { display: none !important; }
 
-        /* --- MODALS (GLOBAL) --- */
+        /* --- MODALS --- */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
             display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
         }
+        .modal.active { display: flex; }
         .modal-content {
             background: #0a111a; border: 1px solid var(--glass-border);
             padding: 35px; border-radius: 30px; max-width: 550px; width: 100%; text-align: center;
             transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column; /* Added for scroll logic */
         }
-        .modal.active { display: flex; }
         .modal.active .modal-content { transform: scale(1); opacity: 1; }
         .close-btn { margin-top: 25px; background: var(--accent); border: none; padding: 12px 30px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; }
 
-        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
-            nav { width: 95%; gap: 12px; padding: 15px; }
-            .logo { order: 1; }
-            .nav-actions { order: 2; }
-            .search-container { order: 3; max-width: 100%; width: 100%; margin: 10px 0 0 0; }
-            .nav-btn { padding: 8px 10px; font-size: 0.6rem; }
-            
-            .tab-btn { padding: 12px 18px; font-size: 0.8rem; }
-            
-            /* Two columns on mobile as requested */
-            .subject-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 12px; 
-            }
-            .subject-card { padding: 25px 15px; border-radius: 20px; }
+            nav { width: 95%; padding: 15px; }
+            .search-container { order: 3; width: 100%; margin: 10px 0 0 0; }
+            .subject-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .subject-card { padding: 35px 15px; }
             .subject-card h3 { font-size: 0.95rem; }
-            .subject-card span { font-size: 0.6rem; }
         }
     </style>
 </head>
@@ -143,11 +136,9 @@
     <div class="ambient"></div>
 
     <nav id="navbar">
-        <a href="/Free-EDU-BD/" class="logo-link">
-            <div class="logo">FREE-EDU</div>
-        </a>
+        <a href="/index.html" class="logo-link"><div class="logo">FREE-EDU</div></a>
         <div class="search-container">
-            <input type="text" id="globalSearch" class="search-bar" placeholder="Search economics subjects..." onkeyup="filterSubjects()">
+            <input type="text" id="globalSearch" class="search-bar" placeholder="Search any subject..." onkeyup="filterSubjects()">
         </div>
         <div class="nav-actions">
             <button class="nav-btn" onclick="openModal('legalModal')">License</button>
@@ -155,84 +146,128 @@
         </div>
     </nav>
 
-    <div id="legalModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem; text-align: center; flex-shrink: 0;">Terms & License</h2>
-            
-            <div class="scroll-area" style="overflow-y: auto; flex-grow: 1; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid var(--glass-border); padding: 5px;">
-                <div style="padding: 20px;">
-                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">01. CONDUCT & COMPLIANCE</h3>
-                    
-                    <p style="color: var(--danger); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">🚫 Piracy Strictly Prohibited</p>
-                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6;">
-                        Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only. Users are strictly prohibited from attempting to download, "rip," or redistribute content.
-                    </p>
 
-                    <p style="color: var(--success); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">🤍 Open Access</p>
-                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6;">
-                        Free to use, modify, and distribute educational content. This site operates in accordance with the <b>YouTube Terms of Service</b>. Users must not attempt to bypass advertisements or modify core player functionality.
-                    </p>
+<div id="legalModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem; text-align: center; flex-shrink: 0;">Terms & License</h2>
+        
+        <div class="scroll-area" style="overflow-y: auto; flex-grow: 1; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid var(--glass-border); padding: 5px;">
+            <div style="padding: 20px; text-align: left;">
+                <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate'; text-align: left;">01. CONDUCT & COMPLIANCE</h3>
+                
+                <p style="color: var(--danger); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left;">🚫 Piracy Strictly Prohibited</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6; text-align: left;">
+                    Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only. Users are strictly prohibited from attempting to download, "rip," or redistribute content.
+                </p>
 
-                    <p style="color: var(--accent); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">📂 Open Source (MIT)</p>
-                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 25px; line-height: 1.6;">
-                        The code for this portal is licensed under <b>MIT</b>. You may modify the design for personal use, but video content belongs to the original YouTube copyright holders.
-                    </p>
+                <p style="color: var(--success); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left;">🤍 Open Access</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6; text-align: left;">
+                    Free to use, modify, and distribute educational content. This site operates in accordance with the <b>YouTube Terms of Service</b>. Users must not attempt to bypass advertisements or modify core player functionality.
+                </p>
 
-                    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+                <p style="color: var(--accent); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left;">📂 Open Source (MIT)</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 25px; line-height: 1.6; text-align: left;">
+                    The code for this portal is licensed under <b>MIT</b>. You may modify the design for personal use, but video content belongs to the original YouTube copyright holders.
+                </p>
 
-                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">02. CONTENT DISCLAIMER</h3>
-                    <ul style="list-style: none; padding: 0; color: var(--text-dim); font-size: 0.85rem; line-height: 1.8;">
-                        <li style="margin-bottom: 10px;"><b>• Ownership:</b> All videos belong strictly to their creators on YouTube.</li>
-                        <li style="margin-bottom: 10px;"><b>• No Hosting:</b> We do not host or upload video files. We use the <b>YouTube API</b>.</li>
-                        <li style="margin-bottom: 10px;"><b>• Availability:</b> Content is determined by uploaders; if they remove it, it disappears here.</li>
-                        <li style="margin-bottom: 10px;"><b>• Affiliation:</b> Reference to schools is not an endorsement.</li>
-                    </ul>
+                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
 
-                    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+                <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate'; text-align: left;">02. CONTENT DISCLAIMER</h3>
+                <ul style="list-style: none; padding: 0; color: var(--text-dim); font-size: 0.85rem; line-height: 1.8; text-align: left;">
+                    <li style="margin-bottom: 10px; text-align: left;"><b>• Ownership:</b> All videos belong strictly to their creators on YouTube.</li>
+                    <li style="margin-bottom: 10px; text-align: left;"><b>• No Hosting:</b> We do not host or upload video files. We use the <b>YouTube API</b>.</li>
+                    <li style="margin-bottom: 10px; text-align: left;"><b>• Availability:</b> Content is determined by uploaders; if they remove it, it disappears here.</li>
+                    <li style="margin-bottom: 10px; text-align: left;"><b>• Affiliation:</b> Reference to schools is not an endorsement.</li>
+                </ul>
 
-                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">03. CONTACT & DMCA</h3>
-                    <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.6;">
-                        Creators wishing to remove videos from our directory, please contact us. We remove links within 48 hours. <br><br>
-                        <i>Note: Disabling embedding in YouTube Studio will remove the video here automatically.</i>
-                    </p>
-                    
-                </div>
+                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+
+                <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate'; text-align: left;">03. CONTACT & DMCA</h3>
+                <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; text-align: left;">
+                    Creators wishing to remove videos from our directory, please contact us. We remove links within 48 hours. <br><br>
+                    <i>Note: Disabling embedding in YouTube Studio will remove the video here automatically.</i>
+                </p>
             </div>
-            
-            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
         </div>
-    </div> 
+        
+        <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
+    </div>
+</div>
 
-
+<style>
+    /* 3. MODAL STYLING */
+    .modal {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+        display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+    }
+    .modal-content {
+        background: #0a111a; border: 1px solid var(--glass-border);
+        padding: 30px; border-radius: 30px; max-width: 600px; width: 100%;
+        display: flex; flex-direction: column; max-height: 85vh;
+        transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .modal.active { display: flex; }
+    .modal.active .modal-content { transform: scale(1); opacity: 1; }
     
+    .close-btn { 
+        margin-top: 15px; background: var(--accent); border: none; 
+        padding: 12px 30px; color: white; border-radius: 50px; 
+        cursor: pointer; width: 100%; font-weight: 700; flex-shrink: 0; 
+    }
+
+    .scroll-area::-webkit-scrollbar { width: 4px; }
+    .scroll-area::-webkit-scrollbar-track { background: transparent; }
+    .scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+</style>
+
+<script>
+    /* 4. MODAL LOGIC */
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        document.body.style.overflow = 'auto'; // Re-enable scrolling
+    }
+
+    // Close modal if clicking on the dark backdrop
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal(event.target.id);
+        }
+    }
+</script>
 
 <div id="aboutModal" class="modal">
         <style>
-            /* Critical fix for mobile height and scrolling */
             .about-scroll-container {
-                max-height: 85vh; /* Limits height to 85% of any screen */
-                overflow-y: auto; /* Enables vertical scrolling */
+                max-height: 85vh; 
+                overflow-y: auto; 
                 overflow-x: hidden;
                 width: 100%;
                 display: flex;
                 flex-direction: column;
-                scrollbar-width: none; /* Firefox */
+                scrollbar-width: none; 
             }
             .about-scroll-container::-webkit-scrollbar {
-                display: none; /* Chrome/Safari */
+                display: none; 
             }
 
             @media (max-width: 480px) {
                 .about-content {
                     width: 92% !important;
                     max-height: 90vh !important;
+                    padding: 0 !important;
                 }
                 .tech-stack-grid {
                     grid-template-columns: 1fr !important;
                     gap: 12px !important;
                 }
                 .pp-container {
-                    width: 120px !important; /* Slightly smaller for mobile but still prominent */
+                    width: 120px !important; 
                     height: 120px !important;
                 }
                 .dev-name {
@@ -286,8 +321,6 @@
     </div>
 
 
-
-    
     <div class="tabs-container">
         <button class="tab-btn active" onclick="showYear(1, this)">1st Year</button>
         <button class="tab-btn" onclick="showYear(2, this)">2nd Year</button>
@@ -297,63 +330,77 @@
 
     <div class="container">
         <div id="year1" class="year-content subject-grid">
-            <a href="#" class="subject-card" data-name="basic mathematics"><h3>Basic Mathematics</h3><span>Quantitative</span></a>
-            <a href="#" class="subject-card" data-name="microeconomics"><h3>Microeconomics</h3><span>Core Major</span></a>
-            <a href="#" class="subject-card" data-name="macroeconomics"><h3>Macroeconomics</h3><span>Core Major</span></a>
-            <a href="#" class="subject-card" data-name="statics"><h3>Statics</h3><span>Quantitative</span></a>
-            <a href="#" class="subject-card" data-name="history of emergence"><h3>History of Emergence</h3><span>Mandatory</span></a>
-            <a href="/Free-EDU-BD/economics/ict/" class="subject-card" data-name="ict"><h3>ICT</h3><span>Skill Based</span></a>
-            <a href="#" class="subject-card" data-name="social work"><h3>Social Work</h3><span>Minor</span></a>
+            <a href="#" class="subject-card" data-name="microeconomics" style="--bg-img: url('https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=400')">
+                <h3>Microeconomics</h3><span>Core Major</span>
+            </a>
+            <a href="#" class="subject-card" data-name="macroeconomics" style="--bg-img: url('https://images.unsplash.com/photo-1611974717483-5828fb77e56c?q=80&w=400')">
+                <h3>Macroeconomics</h3><span>Core Major</span>
+            </a>
+            <a href="#" class="subject-card" data-name="basic mathematics" style="--bg-img: url('https://images.unsplash.com/photo-1509228468518-180dd48219d7?q=80&w=400')">
+                <h3>Basic Mathematics</h3><span>Quantitative</span>
+            </a>
+            <a href="#" class="subject-card" data-name="basic statistics" style="--bg-img: url('https://images.unsplash.com/photo-1551288049-bbda38a10ad5?q=80&w=400')">
+                <h3>Basic Statistics</h3><span>Quantitative</span>
+            </a>
+            <a href="#" class="subject-card" data-name="history of emergence" style="--bg-img: url('https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=400')">
+                <h3>History of Emergence</h3><span>Mandatory</span>
+            </a>
+            <a href="#" class="subject-card" data-name="ict" style="--bg-img: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400')">
+                <h3>ICT</h3><span>Skill Based</span>
+            </a>
         </div>
 
         <div id="year2" class="year-content subject-grid hidden">
-            <a href="#" class="subject-card" data-name="intermediate micro"><h3>Intermediate Micro</h3><span>Core</span></a>
-            <a href="#" class="subject-card" data-name="mathematical economics"><h3>Mathematical Econ</h3><span>Core</span></a>
+            <a href="#" class="subject-card" data-name="intermediate microeconomics" style="--bg-img: url('https://images.unsplash.com/photo-1454165833767-027ff33026b6?q=80&w=400')">
+                <h3>Inter. Microeconomics</h3><span>Core Major</span>
+            </a>
+            <a href="#" class="subject-card" data-name="intermediate macroeconomics" style="--bg-img: url('https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=400')">
+                <h3>Inter. Macroeconomics</h3><span>Core Major</span>
+            </a>
+            <a href="#" class="subject-card" data-name="mathematical economics" style="--bg-img: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=400')">
+                <h3>Mathematical Econ</h3><span>Core Major</span>
+            </a>
+            <a href="#" class="subject-card" data-name="computer applications" style="--bg-img: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400')">
+                <h3>Computer Applications</h3><span>Technical</span>
+            </a>
+            <a href="#" class="subject-card" data-name="economics of development" style="--bg-img: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=400')">
+                <h3>Econ of Development</h3><span>Core</span>
+            </a>
         </div>
 
         <div id="year3" class="year-content subject-grid hidden">
-            <a href="#" class="subject-card" data-name="public finance"><h3>Public Finance</h3><span>Advanced</span></a>
+            <a href="#" class="subject-card" data-name="public finance" style="--bg-img: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=400')">
+                <h3>Public Finance</h3><span>Advanced</span>
+            </a>
+            <a href="#" class="subject-card" data-name="international economics" style="--bg-img: url('https://images.unsplash.com/photo-1521295121783-8a321d551ad2?q=80&w=400')">
+                <h3>International Econ</h3><span>Advanced</span>
+            </a>
+            <a href="#" class="subject-card" data-name="banking and insurance" style="--bg-img: url('https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?q=80&w=400')">
+                <h3>Banking & Insurance</h3><span>Specialized</span>
+            </a>
+            <a href="#" class="subject-card" data-name="agricultural economics" style="--bg-img: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=400')">
+                <h3>Agricultural Econ</h3><span>Specialized</span>
+            </a>
         </div>
 
         <div id="year4" class="year-content subject-grid hidden">
-            <a href="#" class="subject-card" data-name="econometrics"><h3>Econometrics</h3><span>Analysis</span></a>
+            <a href="#" class="subject-card" data-name="econometrics" style="--bg-img: url('https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=400')">
+                <h3>Econometrics</h3><span>Analysis</span>
+            </a>
+            <a href="#" class="subject-card" data-name="environmental economics" style="--bg-img: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400')">
+                <h3>Environmental Econ</h3><span>Applied</span>
+            </a>
+            <a href="#" class="subject-card" data-name="industrial economics" style="--bg-img: url('https://images.unsplash.com/photo-1516937941344-00b4e0337589?q=80&w=400')">
+                <h3>Industrial Econ</h3><span>Applied</span>
+            </a>
+            <a href="#" class="subject-card" data-name="islamic economics" style="--bg-img: url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=400')">
+                <h3>Islamic Economics</h3><span>Specialized</span>
+            </a>
         </div>
     </div>
 
     <script>
-        // NAVIGATION SCROLL LOGIC
-        let lastScrollTop = 0;
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                navbar.classList.add('nav-hidden');
-            } else {
-                navbar.classList.remove('nav-hidden');
-            }
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
-        });
-
-        // TABS LOGIC
-        function showYear(yearNum, btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.year-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.getElementById('year' + yearNum).classList.remove('hidden');
-        }
-
-        // SEARCH FILTER LOGIC
-        function filterSubjects() {
-            let input = document.getElementById('globalSearch').value.toLowerCase();
-            document.querySelectorAll('.subject-card').forEach(card => {
-                let name = card.getAttribute('data-name');
-                card.classList.toggle('hidden', !name.includes(input));
-            });
-        }
-
-        // MODAL CONTROLS
+        // Modal Control
         function openModal(id) { 
             document.getElementById(id).classList.add('active'); 
             document.body.style.overflow = 'hidden'; 
@@ -362,6 +409,42 @@
             document.getElementById(id).classList.remove('active'); 
             document.body.style.overflow = 'auto'; 
         }
+
+        // Tab Switching Logic
+        function showYear(num, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.year-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById('year' + num).classList.remove('hidden');
+            window.scrollTo({ top: 150, behavior: 'smooth' });
+        }
+
+        // Search Filter Logic
+        function filterSubjects() {
+            let input = document.getElementById('globalSearch').value.toLowerCase();
+            document.querySelectorAll('.subject-card').forEach(card => {
+                let name = card.getAttribute('data-name');
+                card.classList.toggle('hidden', !name.includes(input));
+            });
+        }
+
+        // Navbar Animation
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            let current = window.pageYOffset;
+            const nav = document.getElementById('navbar');
+            if (current > lastScroll && current > 120) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastScroll = current;
+        });
+
+        // Initialize first view
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Free-Edu Economics Portal Loaded Successfully.");
+        });
     </script>
 </body>
 </html>
