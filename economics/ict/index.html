@@ -66,7 +66,6 @@
             display: grid; grid-template-columns: 320px 1fr; gap: 20px;
         }
 
-        /* Video Section Styling */
         .content-area { order: 2; }
         .video-section { background: var(--card-bg); border-radius: 25px; border: 1px solid var(--glass-border); padding: 15px; display: none; position: relative; }
         .video-section.active { display: block; }
@@ -77,10 +76,80 @@
         #channelName { color: var(--accent); font-weight: 600; }
         .source-tag:hover #channelName { text-decoration: underline; }
 
-        .player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; position: relative; cursor: pointer; }
+        .player-container { 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            position: relative; 
+            cursor: pointer;
+            touch-action: none;
+        }
         #main-player { pointer-events: none; width: 100%; height: 100%; } 
 
-        /* Sidebar Styling */
+        /* --- CONTROLS --- */
+        .custom-ui-wrapper {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            z-index: 2147483647; 
+            padding: 15px 15px 15px 15px;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+            pointer-events: none;
+        }
+
+        .player-container:hover .custom-ui-wrapper,
+        .custom-ui-wrapper.show-controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }
+        .main-play-trigger { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+        .control-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+        .speed-select { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.7rem; outline: none; text-align: center; -webkit-appearance: none; appearance: none; }
+
+        /* --- SEEKBAR --- */
+        .seekbar-container { width: 100%; padding: 0 5px; margin-bottom: 12px; }
+        #seekbar { 
+            width: 100%; 
+            height: 6px; 
+            border-radius: 10px; 
+            appearance: none; 
+            cursor: pointer; 
+            outline: none;
+            background: rgba(255,255,255,0.2);
+        }
+        #seekbar::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+
+        /* Swipe Indicator */
+        #swipeIndicator {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7); padding: 12px 24px; border-radius: 30px;
+            font-size: 1rem; font-weight: bold; color: white; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 100;
+        }
+
+        /* --- FULLSCREEN ENHANCEMENTS --- */
+        .video-section:fullscreen { 
+            padding: 0; margin: 0;
+            width: 100vw; height: 100vh; 
+            background: #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .video-section:fullscreen .player-container { 
+            width: 100%; height: 100%; border-radius: 0; 
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        /* Uplifting the bar more in Fullscreen */
+        .video-section:fullscreen .custom-ui-wrapper { 
+            padding: 30px 30px 60px 30px; /* Increased bottom padding */
+            background: linear-gradient(transparent, rgba(0,0,0,0.4));
+        }
+
         .sidebar { position: sticky; top: 80px; height: fit-content; order: 1; }
         .chapter-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
         .chapter-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 0.85rem; color: #ffffff; }
@@ -88,68 +157,11 @@
         .video-item { padding: 10px 15px; cursor: pointer; font-size: 0.8rem; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); transition: 0.2s; }
         .video-item:hover { background: var(--accent); color: white; }
 
-        /* Custom Player Controls Wrapper - Now inside player-container */
-        .custom-ui-wrapper {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            z-index: 10;
-            padding: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        /* Show controls on hover/tap or when paused */
-        .player-container:hover .custom-ui-wrapper,
-        .custom-ui-wrapper.show-controls {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
-        
-        .main-play-trigger { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
-        
-        .control-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
-        
-        .speed-select { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 38px; height: 38px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.65rem; outline: none; text-align: center; -webkit-appearance: none; appearance: none; }
-
-        /* Seekbar Styling */
-        .seekbar-container { width: 100%; padding: 0 5px; margin-bottom: 5px; }
-        #seekbar { width: 100%; height: 4px; border-radius: 10px; background: rgba(255,255,255,0.3); appearance: none; cursor: pointer; outline: none; }
-        #seekbar::-webkit-slider-thumb { appearance: none; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); cursor: pointer; }
-
-        /* Fullscreen Overlay Style */
-        .video-section:fullscreen {
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: #000;
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        .video-section:fullscreen .player-container {
-            width: 100%; height: 100%;
-            border-radius: 0; aspect-ratio: auto;
-        }
-
-        .video-section:fullscreen .custom-ui-wrapper {
-            background: rgba(0,0,0,0.25);
-            padding: 30px 20px;
-        }
-
-        .video-section:fullscreen .video-meta-top { display: none; }
-
         @media (max-width: 768px) {
-            .main-layout { display: flex; flex-direction: column; margin-top: 10px; }
+            .main-layout { display: flex; flex-direction: column; }
             .content-area { order: 1; }
             .sidebar { order: 2; position: relative; top: 0; margin-top: 10px; }
-            nav { width: 95%; top: 5px; padding: 10px 15px; }
-            .video-section { padding: 10px; border-radius: 20px; }
-            .custom-ui-wrapper { opacity: 1; pointer-events: auto; background: rgba(0,0,0,0.4); } /* Keep visible on mobile for ease */
+            .custom-ui-wrapper { opacity: 1; pointer-events: auto; background: rgba(0,0,0,0.6); }
         }
 
         .active-list { display: block !important; }
@@ -196,8 +208,9 @@
                     <span id="vidTitle"></span>
                     <a id="sourceLink" href="#" target="_blank" class="source-tag">Source: <span id="channelName">Loading...</span></a>
                 </div>
-                <div class="player-container" onclick="handleContainerClick()">
+                <div class="player-container" id="pContainer">
                     <div id="main-player"></div>
+                    <div id="swipeIndicator">0:00</div>
                     
                     <div class="custom-ui-wrapper" id="customControls">
                         <div class="seekbar-container">
@@ -242,30 +255,30 @@
         let player, playing = false, seekInterval;
         const seekbar = document.getElementById('seekbar');
         const controlsWrapper = document.getElementById('customControls');
+        const container = document.getElementById('pContainer');
+        const swipeIndicator = document.getElementById('swipeIndicator');
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('main-player', {
                 height: '100%', width: '100%',
-                playerVars: { 
-                    'autoplay': 0, 
-                    'controls': 0, 
-                    'rel': 0, 
-                    'modestbranding': 1,
-                    'iv_load_policy': 3,
-                    'disablekb': 1
-                },
-                events: { 
-                    'onStateChange': onPlayerStateChange,
-                    'onReady': onPlayerReady 
-                }
+                playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'modestbranding': 1, 'iv_load_policy': 3, 'disablekb': 1 },
+                events: { 'onStateChange': onPlayerStateChange, 'onReady': onPlayerReady }
             });
         }
 
         function onPlayerReady() {
-            seekbar.addEventListener('input', (e) => {
-                const time = player.getDuration() * (seekbar.value / 100);
-                player.seekTo(time);
-            });
+            seekbar.addEventListener('input', updateSeek);
+            setupSwipeToSeek();
+        }
+
+        function updateSeek() {
+            const time = player.getDuration() * (seekbar.value / 100);
+            player.seekTo(time);
+            updateSeekbarColor(seekbar.value);
+        }
+
+        function updateSeekbarColor(val) {
+            seekbar.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${val}%, rgba(255,255,255,0.2) ${val}%, rgba(255,255,255,0.2) 100%)`;
         }
 
         function onPlayerStateChange(event) {
@@ -274,15 +287,11 @@
                 btn.innerHTML = 'Ⅱ';
                 playing = true;
                 startTracking();
-                // Auto-hide controls after 3s on mobile
-                if(window.innerWidth <= 768) {
-                    setTimeout(() => controlsWrapper.style.opacity = "0", 3000);
-                }
             } else {
                 btn.innerHTML = '▶';
                 playing = false;
                 stopTracking();
-                controlsWrapper.classList.add('show-controls'); // Keep visible when paused
+                controlsWrapper.classList.add('show-controls');
             }
         }
 
@@ -291,77 +300,77 @@
                 if(player && player.getDuration) {
                     const val = (player.getCurrentTime() / player.getDuration()) * 100;
                     seekbar.value = val || 0;
+                    updateSeekbarColor(val || 0);
                 }
             }, 500);
         }
 
-        function stopTracking() {
-            clearInterval(seekInterval);
+        function stopTracking() { clearInterval(seekInterval); }
+
+        function setupSwipeToSeek() {
+            let startX, startT, isSwiping = false;
+            container.addEventListener('pointerdown', (e) => {
+                startX = e.clientX;
+                startT = player.getCurrentTime();
+                isSwiping = true;
+            });
+            window.addEventListener('pointermove', (e) => {
+                if (!isSwiping) return;
+                const deltaX = e.clientX - startX;
+                if (Math.abs(deltaX) > 30) {
+                    const seekAmount = deltaX * 0.5;
+                    let newTime = startT + seekAmount;
+                    newTime = Math.max(0, Math.min(newTime, player.getDuration()));
+                    swipeIndicator.style.opacity = "1";
+                    swipeIndicator.innerText = (deltaX > 0 ? "» " : "« ") + formatTime(newTime);
+                    player.seekTo(newTime);
+                }
+            });
+            window.addEventListener('pointerup', () => {
+                isSwiping = false;
+                swipeIndicator.style.opacity = "0";
+            });
         }
 
-        function handleContainerClick() {
-            if(window.innerWidth <= 768 || document.fullscreenElement) {
-                controlsWrapper.style.opacity = controlsWrapper.style.opacity === "1" ? "0" : "1";
-            }
+        function formatTime(s) {
+            let m = Math.floor(s / 60);
+            s = Math.floor(s % 60);
+            return m + ":" + (s < 10 ? "0" + s : s);
         }
 
         async function loadVideo(id, title) {
             document.getElementById('welcome').style.display = 'none';
             document.getElementById('playerSection').style.display = 'block';
             document.getElementById('vidTitle').innerText = title;
-            document.getElementById('channelName').innerText = "Fetching...";
-            
             player.loadVideoById(id);
-
             try {
                 const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
                 const data = await res.json();
                 document.getElementById('channelName').innerText = data.author_name;
                 document.getElementById('sourceLink').href = data.author_url;
-            } catch (e) {
-                document.getElementById('channelName').innerText = "YouTube";
-            }
-
-            if(window.innerWidth <= 768) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            } catch (e) { document.getElementById('channelName').innerText = "YouTube"; }
         }
 
         function toggleVideo(e) {
             if(e) e.stopPropagation();
-            if (playing) player.pauseVideo();
-            else player.playVideo();
+            if (playing) player.pauseVideo(); else player.playVideo();
         }
 
-        function toggleChapter(id) {
-            document.getElementById(id).classList.toggle('active-list');
-        }
-
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+        function toggleChapter(id) { document.getElementById(id).classList.toggle('active-list'); }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
         function toggleFullscreen(e) {
             if(e) e.stopPropagation();
-            const container = document.getElementById('playerSection');
-            
+            const containerSect = document.getElementById('playerSection');
             if (!document.fullscreenElement) {
-                container.requestFullscreen().then(() => {
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock('landscape').catch(err => console.log(err));
-                    }
-                }).catch(err => console.log(err.message));
+                if (containerSect.requestFullscreen) {
+                    containerSect.requestFullscreen().then(() => {
+                        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+                    });
+                }
             } else {
                 document.exitFullscreen();
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
             }
         }
     </script>
