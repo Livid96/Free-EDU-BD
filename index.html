@@ -63,6 +63,22 @@
         }
         .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
 
+        /* --- MODALS --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+        }
+        .modal-content {
+            background: #0a111a; border: 1px solid var(--glass-border);
+            padding: 30px; border-radius: 30px; max-width: 600px; width: 100%;
+            display: flex; flex-direction: column; max-height: 85vh;
+            transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .modal.active { display: flex; }
+        .modal.active .modal-content { transform: scale(1); opacity: 1; }
+        .close-btn { margin-top: 15px; background: var(--accent); border: none; padding: 12px 30px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; flex-shrink: 0; }
+
         /* --- NOTICE BOX --- */
         .notice-wrapper { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
         .notice-box {
@@ -101,21 +117,6 @@
         .card:hover .img-box img { transform: scale(1.2); }
         .card h3 { font-size: 1rem; text-align: center; padding-bottom: 5px; font-weight: 600; }
 
-        /* --- MODALS --- */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
-            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
-        }
-        .modal-content {
-            background: #0a111a; border: 1px solid var(--glass-border);
-            padding: 35px; border-radius: 30px; max-width: 550px; width: 100%;
-            text-align: center; transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .modal.active { display: flex; }
-        .modal.active .modal-content { transform: scale(1); opacity: 1; }
-        .close-btn { margin-top: 25px; background: var(--accent); border: none; padding: 12px 30px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; }
-
         /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 1024px) { .subject-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 768px) {
@@ -128,11 +129,17 @@
             .card h3 { font-size: 0.85rem; }
             .nav-btn { padding: 8px 10px; font-size: 0.6rem; }
             .notice-header { font-size: 1rem; letter-spacing: 3px; }
+            .modal-content { padding: 20px; }
         }
 
         .hidden { display: none !important; }
         .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Custom Scrollbar for License Box */
+        .scroll-area::-webkit-scrollbar { width: 4px; }
+        .scroll-area::-webkit-scrollbar-track { background: transparent; }
+        .scroll-area::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -149,6 +156,62 @@
         </div>
     </nav>
 
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem; text-align: center; flex-shrink: 0;">Terms & License</h2>
+            
+            <div class="scroll-area" style="overflow-y: auto; flex-grow: 1; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid var(--glass-border); padding: 5px;">
+                <div style="padding: 20px;">
+                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">01. CONDUCT & COMPLIANCE</h3>
+                    
+                    <p style="color: var(--danger); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">🚫 Piracy Strictly Prohibited</p>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6;">
+                        Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only. Users are strictly prohibited from attempting to download, "rip," or redistribute content.
+                    </p>
+
+                    <p style="color: var(--success); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">🤍 Open Access</p>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6;">
+                        Free to use, modify, and distribute educational content. This site operates in accordance with the <b>YouTube Terms of Service</b>. Users must not attempt to bypass advertisements or modify core player functionality.
+                    </p>
+
+                    <p style="color: var(--accent); font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">📂 Open Source (MIT)</p>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 25px; line-height: 1.6;">
+                        The code for this portal is licensed under <b>MIT</b>. You may modify the design for personal use, but video content belongs to the original YouTube copyright holders.
+                    </p>
+
+                    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+
+                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">02. CONTENT DISCLAIMER</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--text-dim); font-size: 0.85rem; line-height: 1.8;">
+                        <li style="margin-bottom: 10px;"><b>• Ownership:</b> All videos belong strictly to their creators on YouTube.</li>
+                        <li style="margin-bottom: 10px;"><b>• No Hosting:</b> We do not host or upload video files. We use the <b>YouTube API</b>.</li>
+                        <li style="margin-bottom: 10px;"><b>• Availability:</b> Content is determined by uploaders; if they remove it, it disappears here.</li>
+                        <li style="margin-bottom: 10px;"><b>• Affiliation:</b> Reference to schools is not an endorsement.</li>
+                    </ul>
+
+                    <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+
+                    <h3 style="color: var(--accent); font-size: 0.85rem; margin-bottom: 15px; font-family: 'Syncopate';">03. CONTACT & DMCA</h3>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.6;">
+                        Creators wishing to remove videos from our directory, please contact us. We remove links within 48 hours. <br><br>
+                        <i>Note: Disabling embedding in YouTube Studio will remove the video here automatically.</i>
+                    </p>
+                    
+                </div>
+            </div>
+            
+            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem; text-align: center;">About Me</h2>
+            <p style="color: var(--text-dim); line-height: 1.6; text-align: center;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
+            <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
+        </div>
+    </div>
+
     <div id="noticeWrapper" class="notice-wrapper">
         <div class="notice-box">
             <div class="notice-header">NOTICE & GUIDELINES</div>
@@ -163,13 +226,13 @@
         <div class="faculty-group reveal">
             <h2 class="faculty-title">🔬 SCIENCE FACULTY</h2>
             <div class="subject-grid">
-                <a href="/science/physics/" class="card" data-name="physics"><div class="img-box"><img src="https://images.unsplash.com/photo-1636466484292-713cf71f4754?w=500"></div><h3>Physics</h3></a>
-                <a href="/science/chemistry/" class="card" data-name="chemistry"><div class="img-box"><img src="https://images.unsplash.com/photo-1532187863486-abf9d3a4461a?w=500"></div><h3>Chemistry</h3></a>
-                <a href="/science/mathematics/" class="card" data-name="mathematics"><div class="img-box"><img src="https://images.unsplash.com/photo-1509228468518-180dd48a542f?w=500"></div><h3>Mathematics</h3></a>
-                <a href="/science/statistics/" class="card" data-name="statistics"><div class="img-box"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500"></div><h3>Statistics</h3></a>
-                <a href="/science/soil-science/" class="card" data-name="soil science"><div class="img-box"><img src="https://images.unsplash.com/photo-1596434300655-e48d3ff3dd5e?w=500"></div><h3>Soil Science</h3></a>
-                <a href="/science/botany/" class="card" data-name="botany"><div class="img-box"><img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500"></div><h3>Botany</h3></a>
-                <a href="/science/zoology/" class="card" data-name="zoology"><div class="img-box"><img src="https://images.unsplash.com/photo-1534188753412-b89c0c2f8a1f?w=500"></div><h3>Zoology</h3></a>
+                <a href="/science/physics" class="card" data-name="physics"><div class="img-box"><img src="https://images.unsplash.com/photo-1636466484292-713cf71f4754?w=500"></div><h3>Physics</h3></a>
+                <a href="/science/chemistry" class="card" data-name="chemistry"><div class="img-box"><img src="https://images.unsplash.com/photo-1532187863486-abf9d3a4461a?w=500"></div><h3>Chemistry</h3></a>
+                <a href="/science/mathematics" class="card" data-name="mathematics"><div class="img-box"><img src="https://images.unsplash.com/photo-1509228468518-180dd48a542f?w=500"></div><h3>Mathematics</h3></a>
+                <a href="/science/statistics" class="card" data-name="statistics"><div class="img-box"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500"></div><h3>Statistics</h3></a>
+                <a href="/science/soil-science" class="card" data-name="soil science"><div class="img-box"><img src="https://images.unsplash.com/photo-1596434300655-e48d3ff3dd5e?w=500"></div><h3>Soil Science</h3></a>
+                <a href="/science/botany" class="card" data-name="botany"><div class="img-box"><img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500"></div><h3>Botany</h3></a>
+                <a href="/science/zoology" class="card" data-name="zoology"><div class="img-box"><img src="https://images.unsplash.com/photo-1534188753412-b89c0c2f8a1f?w=500"></div><h3>Zoology</h3></a>
             </div>
         </div>
 
@@ -177,63 +240,41 @@
             <h2 class="faculty-title">🧠 SOCIAL SCIENCE</h2>
             <div class="subject-grid">
                 <a href="/Free-EDU-BD/economics/" class="card" data-name="economics"><div class="img-box"><img src="https://www.superprof.co.in/blog/wp-content/uploads/2023/06/economic-models.jpg"></div><h3>Economics</h3></a>
-                <a href="/sociology/" class="card" data-name="sociology"><div class="img-box"><img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=500"></div><h3>Sociology</h3></a>
-                <a href="/political-science/" class="card" data-name="political science"><div class="img-box"><img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=500"></div><h3>Political Science</h3></a>
-                <a href="/social-work/" class="card" data-name="social work"><div class="img-box"><img src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=500"></div><h3>Social Work</h3></a>
+                <a href="/sociology" class="card" data-name="sociology"><div class="img-box"><img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=500"></div><h3>Sociology</h3></a>
+                <a href="/political-science" class="card" data-name="political science"><div class="img-box"><img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=500"></div><h3>Political Science</h3></a>
+                <a href="/social-work" class="card" data-name="social work"><div class="img-box"><img src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=500"></div><h3>Social Work</h3></a>
             </div>
         </div>
 
         <div class="faculty-group reveal">
             <h2 class="faculty-title">📖 HUMANITIES / ARTS</h2>
             <div class="subject-grid">
-                <a href="/bangla/" class="card" data-name="bangla"><div class="img-box"><img src="https://images.unsplash.com/photo-1587133374133-c113765b7ef7?w=500"></div><h3>Bangla</h3></a>
-                <a href="/english/" class="card" data-name="english"><div class="img-box"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500"></div><h3>English</h3></a>
-                <a href="/philosophy/" class="card" data-name="philosophy"><div class="img-box"><img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=500"></div><h3>Philosophy</h3></a>
-                <a href="/islamic-history/" class="card" data-name="islamic history"><div class="img-box"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?w=500"></div><h3>Islamic History</h3></a>
+                <a href="/bangla" class="card" data-name="bangla"><div class="img-box"><img src="https://images.unsplash.com/photo-1587133374133-c113765b7ef7?w=500"></div><h3>Bangla</h3></a>
+                <a href="/english" class="card" data-name="english"><div class="img-box"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500"></div><h3>English</h3></a>
+                <a href="/philosophy" class="card" data-name="philosophy"><div class="img-box"><img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=500"></div><h3>Philosophy</h3></a>
+                <a href="/islamic-history" class="card" data-name="islamic history"><div class="img-box"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?w=500"></div><h3>Islamic History</h3></a>
             </div>
         </div>
 
         <div class="faculty-group reveal">
             <h2 class="faculty-title">💼 BUSINESS STUDIES</h2>
             <div class="subject-grid">
-                <a href="/accounting/" class="card" data-name="accounting"><div class="img-box"><img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500"></div><h3>Accounting</h3></a>
-                <a href="/management/" class="card" data-name="management"><div class="img-box"><img src="https://images.unsplash.com/photo-1454165833767-027ffea9e7a7?w=500"></div><h3>Management</h3></a>
-                <a href="/finance/" class="card" data-name="finance"><div class="img-box"><img src="https://images.unsplash.com/photo-1611974714851-48206138473c?w=500"></div><h3>Finance</h3></a>
-                <a href="/marketing/" class="card" data-name="marketing"><div class="img-box"><img src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=500"></div><h3>Marketing</h3></a>
+                <a href="/accounting" class="card" data-name="accounting"><div class="img-box"><img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500"></div><h3>Accounting</h3></a>
+                <a href="/management" class="card" data-name="management"><div class="img-box"><img src="https://images.unsplash.com/photo-1454165833767-027ffea9e7a7?w=500"></div><h3>Management</h3></a>
+                <a href="/finance" class="card" data-name="finance"><div class="img-box"><img src="https://images.unsplash.com/photo-1611974714851-48206138473c?w=500"></div><h3>Finance</h3></a>
+                <a href="/marketing" class="card" data-name="marketing"><div class="img-box"><img src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=500"></div><h3>Marketing</h3></a>
             </div>
-        </div>
-    </div>
-
-    <div id="legalModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">Terms & License</h2>
-            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                <p style="color: var(--danger); font-weight: 700; margin-bottom: 10px;">🚫 Piracy Strictly Prohibited</p>
-                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px;">Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only.</p>
-                <p style="color: var(--success); font-weight: 700;">🤍 Open Access</p>
-                <p style="color: var(--text-dim); font-size: 0.85rem;">Free to use, modify, and distribute educational content.</p>
-            </div>
-            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
-        </div>
-    </div>
-
-    <div id="aboutModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">About Me</h2>
-            <p style="color: var(--text-dim); line-height: 1.6;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
-            <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
         </div>
     </div>
 
     <script>
-        // GLOBAL SUBJECT MAP - Updated for Clean URLs
         const globalSubjectMap = {
-            "microeconomics": "/economics/",
-            "macroeconomics": "/economics/",
-            "basic mathematics": "/economics/",
-            "economics": "/economics/",
-            "accounting": "/accounting/",
-            "physics": "/science/physics/"
+            "microeconomics": "/economics/economics.html",
+            "macroeconomics": "/economics/economics.html",
+            "basic mathematics": "/economics/economics.html",
+            "economics": "/economics/economics.html",
+            "accounting": "/accounting/index.html",
+            "physics": "/science/physics/index.html"
         };
 
         let lastScrollTop = 0;
@@ -261,7 +302,6 @@
             });
         }
 
-        // REDIRECT LOGIC
         document.getElementById('globalSearch').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 let query = this.value.toLowerCase().trim();
@@ -273,6 +313,15 @@
                 }
             }
         });
+
+        function openModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            document.body.style.overflow = 'hidden'; 
+        }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            document.body.style.overflow = 'auto'; 
+        }
 
         function applyNoticeLogic() {
             const wrapper = document.getElementById('noticeWrapper');
@@ -288,9 +337,6 @@
                 if (!hasTxt) body.classList.add('hidden');
             }
         }
-
-        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
