@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free-Edu | Honours Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #010816;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #3a86ff;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --danger: #ff4d4d;
+            --success: #00ff88;
+            
+            /* Modern Crimson Theme for Notice */
+            --danger-bg: linear-gradient(135deg, #b91c1c, #dc2626);
+            --danger-glow: rgba(220, 38, 38, 0.5);
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); overflow-x: hidden; scroll-behavior: smooth; }
+
+        .ambient {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 80% 20%, rgba(58, 134, 255, 0.1), transparent 40%);
+            z-index: -2;
+        }
+
+        /* --- NAVIGATION (With Hide/Show Logic) --- */
+        nav {
+            position: sticky; top: 15px; z-index: 1000;
+            max-width: 1200px; margin: 10px auto; padding: 15px 25px;
+            background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 25px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            transition: transform 0.4s ease, opacity 0.4s ease; /* Smooth transition */
+        }
+
+        /* Class to hide nav */
+        nav.nav-hidden {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+
+        .logo { font-family: 'Syncopate', sans-serif; font-size: 0.85rem; letter-spacing: 3px; color: var(--accent); }
+
+        .search-container { flex: 1; max-width: 450px; order: 2; }
+        .search-bar {
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            border-radius: 50px; padding: 10px 20px; color: white; outline: none; transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .search-bar:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+        .nav-actions { order: 3; display: flex; gap: 10px; }
+        .nav-btn {
+            background: var(--glass); border: 1px solid var(--glass-border); color: white;
+            padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.7rem;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+
+        /* --- NOTICE BOX (MODERN CRIMSON) --- */
+        .notice-wrapper { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        
+        .notice-box {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 32px; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .notice-header {
+            background: var(--danger-bg); 
+            color: #fff; 
+            padding: 20px 24px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800; 
+            font-size: 1.2rem;
+            letter-spacing: 5px; 
+            text-align: center;
+            box-shadow: 0 0 35px var(--danger-glow);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .notice-img { width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; }
+
+        .notice-body { padding: 32px; background: rgba(0,0,0,0.2); text-align: center; }
+        .notice-body p { font-size: 1.1rem; line-height: 1.7; font-weight: 300; color: var(--text-main); }
+
+        /* --- GRID SYSTEM --- */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
+        .faculty-title { 
+            font-size: 0.9rem; color: var(--accent); margin: 60px 0 25px;
+            display: flex; align-items: center; gap: 15px; letter-spacing: 2px; opacity: 0.8;
+        }
+        .faculty-title::after { content: ""; height: 1px; flex-grow: 1; background: var(--glass-border); }
+
+        .subject-grid { 
+            display: grid; gap: 20px; 
+            grid-template-columns: repeat(4, 1fr); 
+        }
+
+        /* --- CARD DESIGN --- */
+        .card {
+            background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); border-radius: 25px; padding: 12px;
+            text-decoration: none; color: inherit; transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .card:hover { transform: translateY(-8px); border-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+        .img-box { width: 100%; height: 160px; border-radius: 18px; overflow: hidden; margin-bottom: 15px; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .card:hover .img-box img { transform: scale(1.2); }
+        
+        .card h3 { font-size: 1rem; text-align: center; padding-bottom: 5px; font-weight: 600; }
+
+        /* --- MODALS --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+        }
+        .modal-content {
+            background: #0a111a; border: 1px solid var(--glass-border);
+            padding: 35px; border-radius: 30px; max-width: 550px; width: 100%;
+            text-align: center; transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .modal.active { display: flex; }
+        .modal.active .modal-content { transform: scale(1); opacity: 1; }
+        .close-btn { margin-top: 25px; background: var(--accent); border: none; padding: 12px 30px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1024px) { .subject-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        @media (max-width: 768px) {
+            nav { width: 95%; gap: 12px; padding: 15px; }
+            .logo { order: 1; }
+            .nav-actions { order: 2; }
+            .search-container { order: 3; max-width: 100%; width: 100%; margin: 5px 0 0 0; }
+            .search-bar { background: rgba(255,255,255,0.05); padding: 12px 20px; }
+
+            .subject-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .img-box { height: 110px; }
+            .card h3 { font-size: 0.85rem; }
+            .nav-btn { padding: 8px 10px; font-size: 0.6rem; }
+            .notice-header { font-size: 1rem; letter-spacing: 3px; }
+        }
+
+        .hidden { display: none !important; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="ambient"></div>
+
+    <nav id="navbar">
+        <div class="logo">FREE-EDU</div>
+        <div class="search-container">
+            <input type="text" id="globalSearch" class="search-bar" placeholder="Search any subject..." onkeyup="filterSubjects()">
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="openModal('legalModal')">License</button>
+            <button class="nav-btn" onclick="openModal('aboutModal')">About</button>
+        </div>
+    </nav>
+
+    <div id="noticeWrapper" class="notice-wrapper">
+        <div class="notice-box">
+            <div class="notice-header">NOTICE & GUIDELINES</div>
+            <img id="noticeImg" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200" class="notice-img">
+            
+            <div id="noticeBody" class="notice-body">
+                <p id="noticeText">Welcome to the portal. Please follow academic integrity guidelines.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="faculty-group reveal">
+            <h2 class="faculty-title">🔬 SCIENCE FACULTY</h2>
+            <div class="subject-grid">
+                <a href="science/physics" class="card" data-name="physics"><div class="img-box"><img src="https://images.unsplash.com/photo-1636466484292-713cf71f4754?w=500"></div><h3>Physics</h3></a>
+                <a href="science/chemistry" class="card" data-name="chemistry"><div class="img-box"><img src="https://images.unsplash.com/photo-1532187863486-abf9d3a4461a?w=500"></div><h3>Chemistry</h3></a>
+                <a href="science/mathematics" class="card" data-name="mathematics"><div class="img-box"><img src="https://images.unsplash.com/photo-1509228468518-180dd48a542f?w=500"></div><h3>Mathematics</h3></a>
+                <a href="science/statistics" class="card" data-name="statistics"><div class="img-box"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500"></div><h3>Statistics</h3></a>
+                <a href="science/soil-science" class="card" data-name="soil science"><div class="img-box"><img src="https://images.unsplash.com/photo-1596434300655-e48d3ff3dd5e?w=500"></div><h3>Soil Science</h3></a>
+                <a href="science/botany" class="card" data-name="botany"><div class="img-box"><img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500"></div><h3>Botany</h3></a>
+                <a href="science/zoology" class="card" data-name="zoology"><div class="img-box"><img src="https://images.unsplash.com/photo-1534188753412-b89c0c2f8a1f?w=500"></div><h3>Zoology</h3></a>
+            </div>
+        </div>
+
+        <div class="faculty-group reveal">
+            <h2 class="faculty-title">🧠 SOCIAL SCIENCE</h2>
+            <div class="subject-grid">
+                <a href="economics/economics.html" class="card" data-name="economics"><div class="img-box"><img src="https://images.unsplash.com/photo-1611974714851-48206138473c?w=500"></div><h3>Economics</h3></a>
+                <a href="sociology" class="card" data-name="sociology"><div class="img-box"><img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=500"></div><h3>Sociology</h3></a>
+                <a href="political-science" class="card" data-name="political science"><div class="img-box"><img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=500"></div><h3>Political Science</h3></a>
+                <a href="social-work" class="card" data-name="social work"><div class="img-box"><img src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=500"></div><h3>Social Work</h3></a>
+            </div>
+        </div>
+
+        <div class="faculty-group reveal">
+            <h2 class="faculty-title">📖 HUMANITIES / ARTS</h2>
+            <div class="subject-grid">
+                <a href="bangla" class="card" data-name="bangla"><div class="img-box"><img src="https://images.unsplash.com/photo-1587133374133-c113765b7ef7?w=500"></div><h3>Bangla</h3></a>
+                <a href="english" class="card" data-name="english"><div class="img-box"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500"></div><h3>English</h3></a>
+                <a href="philosophy" class="card" data-name="philosophy"><div class="img-box"><img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=500"></div><h3>Philosophy</h3></a>
+                <a href="islamic-history" class="card" data-name="islamic history"><div class="img-box"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?w=500"></div><h3>Islamic History</h3></a>
+            </div>
+        </div>
+
+        <div class="faculty-group reveal">
+            <h2 class="faculty-title">💼 BUSINESS STUDIES</h2>
+            <div class="subject-grid">
+                <a href="accounting" class="card" data-name="accounting"><div class="img-box"><img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500"></div><h3>Accounting</h3></a>
+                <a href="management" class="card" data-name="management"><div class="img-box"><img src="https://images.unsplash.com/photo-1454165833767-027ffea9e7a7?w=500"></div><h3>Management</h3></a>
+                <a href="finance" class="card" data-name="finance"><div class="img-box"><img src="https://images.unsplash.com/photo-1611974714851-48206138473c?w=500"></div><h3>Finance</h3></a>
+                <a href="marketing" class="card" data-name="marketing"><div class="img-box"><img src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=500"></div><h3>Marketing</h3></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">Terms & License</h2>
+            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                <p style="color: var(--danger); font-weight: 700; margin-bottom: 10px;">🚫 Piracy Strictly Prohibited</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px;">Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only.</p>
+                <p style="color: var(--success); font-weight: 700;">🤍 Open Access</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">Free to use, modify, and distribute educational content.</p>
+            </div>
+            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">About Me</h2>
+            <p style="color: var(--text-dim); line-height: 1.6;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
+            <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        // [HIDE/SHOW NAV ON SCROLL]
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down
+                navbar.classList.add('nav-hidden');
+            } else {
+                // Scrolling up
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+        });
+
+        // [DYNAMIC NOTICE LOGIC]
+        function applyNoticeLogic() {
+            const wrapper = document.getElementById('noticeWrapper');
+            const img = document.getElementById('noticeImg');
+            const body = document.getElementById('noticeBody');
+            const text = document.getElementById('noticeText');
+
+            const hasImg = img.getAttribute('src') !== "~0~";
+            const hasTxt = text.innerText.trim() !== "~0~";
+
+            if (!hasImg && !hasTxt) {
+                wrapper.classList.add('hidden');
+            } else {
+                if (!hasImg) img.classList.add('hidden');
+                if (!hasTxt) body.classList.add('hidden');
+            }
+        }
+
+        function filterSubjects() {
+            let input = document.getElementById('globalSearch').value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                let name = card.getAttribute('data-name');
+                card.classList.toggle('hidden', !name.includes(input));
+            });
+            document.querySelectorAll('.faculty-group').forEach(group => {
+                let hasVisible = group.querySelectorAll('.card:not(.hidden)').length > 0;
+                group.classList.toggle('hidden', !hasVisible);
+            });
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        window.onload = function() {
+            applyNoticeLogic();
+        };
+    </script>
+</body>
+</html>
