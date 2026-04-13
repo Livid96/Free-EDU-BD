@@ -2,377 +2,647 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free-Edu | ICT Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Free-Edu | ICT & Honours Master Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Syncopate:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg: #010816;
+            /* Color Palette */
+            --bg-deep: #010816;
+            --bg-card: rgba(15, 23, 42, 0.6);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --accent: #3a86ff;
+            --accent-glow: rgba(58, 134, 255, 0.4);
             --text-main: #ffffff;
             --text-dim: rgba(255, 255, 255, 0.5);
             --danger: #ff4d4d;
             --success: #00ff88;
-            --card-bg: rgba(15, 23, 42, 0.6);
-            --border: rgba(255, 255, 255, 0.08);
+            --sidebar-width: 350px;
+            
+            /* Animations */
+            --transition-main: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
+        /* --- BASE RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text-main); overflow-x: hidden; }
+        body { background: var(--bg-deep); color: var(--text-main); overflow-x: hidden; scroll-behavior: smooth; }
 
-        .ambient {
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .ambient-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 80% 20%, rgba(58, 134, 255, 0.1), transparent 40%);
-            z-index: -2;
+            background: radial-gradient(circle at 80% 20%, rgba(58, 134, 255, 0.12), transparent 45%),
+                        radial-gradient(circle at 20% 80%, rgba(58, 134, 255, 0.08), transparent 45%);
+            z-index: -1; pointer-events: none;
         }
 
-        /* --- NAVIGATION --- */
+        /* --- NAVIGATION SYSTEM (MATCHED TO YOUR STYLE) --- */
         nav {
-            position: sticky; top: 10px; z-index: 1000;
-            max-width: 1200px; margin: 10px auto; padding: 12px 20px;
-            background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
+            position: sticky; top: 15px; z-index: 2000;
+            max-width: 1200px; margin: 15px auto; padding: 15px 25px;
+            background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 25px;
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            transition: var(--transition-main);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        .logo { font-family: 'Syncopate', sans-serif; font-size: 0.8rem; letter-spacing: 2px; color: var(--accent); text-decoration: none; }
-        .nav-actions { display: flex; gap: 8px; }
+        nav.nav-hidden { transform: translateY(-120px); opacity: 0; }
+
+        .logo-area { text-decoration: none; display: flex; align-items: center; }
+        .logo-text { font-family: 'Syncopate', sans-serif; font-size: 0.9rem; letter-spacing: 4px; color: var(--accent); font-weight: 700; }
+
+        .search-container { flex: 1; max-width: 450px; order: 2; margin: 0 20px; position: relative; }
+        .search-bar {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+            border-radius: 50px; padding: 11px 22px; color: white; outline: none; 
+            transition: 0.3s; font-size: 0.85rem;
+        }
+        .search-bar:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .nav-actions { order: 3; display: flex; gap: 12px; }
         .nav-btn {
             background: var(--glass); border: 1px solid var(--glass-border); color: white;
-            padding: 6px 12px; border-radius: 50px; cursor: pointer; font-size: 0.65rem;
-            text-transform: uppercase; transition: 0.3s;
+            padding: 9px 18px; border-radius: 50px; cursor: pointer; font-size: 0.7rem;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;
         }
-        .nav-btn:hover { background: var(--glass-border); }
+        .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 15px var(--accent-glow); }
 
-        /* --- MODALS --- */
-        .modal {
+        /* --- MODAL SYSTEM (MAX Z-INDEX) --- */
+        .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+            background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(20px);
+            display: none; justify-content: center; align-items: center; 
+            z-index: 999999; padding: 25px;
         }
-        .modal.active { display: flex; }
-        .modal-content {
+        .modal-overlay.active { display: flex; }
+        .modal-card {
             background: #0a111a; border: 1px solid var(--glass-border);
-            padding: 30px; border-radius: 25px; max-width: 500px; width: 100%; text-align: center;
-            transform: scale(0.9); transition: 0.3s;
+            padding: 45px; border-radius: 35px; max-width: 550px; width: 100%; text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transform: translateY(20px); opacity: 0; transition: 0.4s;
         }
-        .modal.active .modal-content { transform: scale(1); }
-        .close-btn { margin-top: 20px; background: var(--accent); border: none; padding: 10px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; }
+        .modal-overlay.active .modal-card { transform: translateY(0); opacity: 1; }
+        .modal-card h2 { font-family: 'Syncopate', sans-serif; color: var(--accent); font-size: 1.1rem; margin-bottom: 25px; }
+        .modal-card p { color: var(--text-dim); line-height: 1.8; margin-bottom: 20px; font-size: 0.95rem; }
+        .modal-close-btn { margin-top: 20px; background: var(--accent); border: none; padding: 14px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 800; text-transform: uppercase; }
 
-        /* --- PLAYER LAYOUT --- */
-        .main-layout {
-            max-width: 1200px; margin: 20px auto; padding: 0 15px;
-            display: grid; grid-template-columns: 320px 1fr; gap: 20px;
+        /* --- MAIN DASHBOARD GRID --- */
+        .dashboard-container {
+            max-width: 1350px; margin: 30px auto; padding: 0 25px;
+            display: grid; grid-template-columns: var(--sidebar-width) 1fr; gap: 35px;
         }
 
-        .content-area { order: 2; }
-        .video-section { background: var(--card-bg); border-radius: 25px; border: 1px solid var(--glass-border); padding: 15px; display: none; position: relative; }
-        .video-section.active { display: block; }
+        /* --- SIDEBAR & CONTENT LIST --- */
+        .sidebar-menu { position: sticky; top: 110px; height: calc(100vh - 150px); overflow-y: auto; padding-right: 5px; }
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+
+        .chapter-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 24px; margin-bottom: 15px; overflow: hidden; transition: 0.3s; }
+        .chapter-card:hover { border-color: rgba(58, 134, 255, 0.3); }
+        .chapter-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+        .chapter-header h3 { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.5px; color: #fff; text-transform: uppercase; }
+        .chapter-header span { font-size: 0.7rem; color: var(--accent); transition: 0.3s; }
+
+        .lesson-list { display: none; background: rgba(0,0,0,0.25); border-top: 1px solid var(--glass-border); }
+        .lesson-item { 
+            padding: 15px 20px; cursor: pointer; font-size: 0.85rem; color: var(--text-dim); 
+            border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; align-items: center; gap: 12px;
+            transition: 0.2s;
+        }
+        .lesson-item:hover { background: rgba(58, 134, 255, 0.1); color: #fff; padding-left: 28px; }
+        .lesson-item.active-playing { background: rgba(58, 134, 255, 0.15); color: var(--accent); border-left: 4px solid var(--accent); font-weight: 700; }
+
+        /* --- PLAYER WORKSPACE --- */
+        .player-workspace { min-width: 0; position: relative; }
         
-        .video-meta-top { margin-bottom: 10px; }
-        #vidTitle { font-size: 0.9rem; font-weight: 600; color: #fff; display: block; margin-bottom: 2px; line-height: 1.2; }
-        .source-tag { font-size: 0.6rem; color: var(--text-dim); text-decoration: none; display: inline-block; }
-        #channelName { color: var(--accent); font-weight: 600; }
-        .source-tag:hover #channelName { text-decoration: underline; }
-
-        .player-container { 
-            width: 100%; 
-            aspect-ratio: 16/9; 
-            background: #000; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            position: relative; 
-            cursor: pointer;
-            touch-action: none;
+        .empty-state {
+            padding: 120px 40px; text-align: center; background: var(--bg-card);
+            border: 2px dashed var(--glass-border); border-radius: 40px; color: var(--text-dim);
         }
-        #main-player { pointer-events: none; width: 100%; height: 100%; } 
 
-        /* --- CONTROLS --- */
-        .custom-ui-wrapper {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            z-index: 2147483647; 
-            padding: 15px 15px 15px 15px;
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
+        .video-player-wrapper { 
+            background: var(--bg-card); border-radius: 40px; border: 1px solid var(--glass-border); 
+            padding: 30px; display: none; box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+            position: relative; overflow: hidden;
+        }
+        .video-player-wrapper.active { display: block; animation: fadeInUp 0.6s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .video-info-bar { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+        #display-title { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+        .creator-info { font-size: 0.8rem; color: var(--text-dim); }
+        #creator-name { color: var(--accent); font-weight: 700; text-decoration: none; }
+
+        /* --- THE VIDEO SHELL --- */
+        .video-container {
+            width: 100%; aspect-ratio: 16/9; background: #000; 
+            border-radius: 25px; overflow: hidden; position: relative; 
+            cursor: pointer; box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+        }
+        #youtube-engine { pointer-events: none; width: 100%; height: 100%; transform: scale(1.02); }
+
+        /* --- UPLIFTED CONTROLS (VISIBLE ON PC) --- */
+        .control-panel {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85) 40%, #000 100%);
+            z-index: 5000; padding: 40px 30px 50px 30px; /* Heavily uplifted */
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
         }
+        .control-panel.visible { opacity: 1; visibility: visible; pointer-events: auto; }
 
-        .player-container:hover .custom-ui-wrapper,
-        .custom-ui-wrapper.show-controls {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        /* Fullscreen Uplift logic */
+        .video-player-wrapper:fullscreen .control-panel { padding-bottom: 100px; }
+        .video-player-wrapper:fullscreen { padding: 0; border-radius: 0; width: 100vw; height: 100vh; }
+        .video-player-wrapper:fullscreen .video-container { border-radius: 0; height: 100%; }
+
+        .controls-row { display: flex; align-items: center; justify-content: center; gap: 25px; }
         
-        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }
-        .main-play-trigger { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
-        .control-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
-        .speed-select { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.7rem; outline: none; text-align: center; -webkit-appearance: none; appearance: none; }
-
-        /* --- SEEKBAR --- */
-        .seekbar-container { width: 100%; padding: 0 5px; margin-bottom: 12px; }
-        #seekbar { 
-            width: 100%; 
-            height: 6px; 
-            border-radius: 10px; 
-            appearance: none; 
-            cursor: pointer; 
-            outline: none;
-            background: rgba(255,255,255,0.2);
+        .main-play-btn { 
+            width: 65px; height: 65px; border-radius: 50%; background: var(--accent); 
+            border: none; color: white; cursor: pointer; font-size: 1.5rem; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 0 30px var(--accent-glow); transition: 0.3s;
         }
-        #seekbar::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .main-play-btn:hover { transform: scale(1.15); filter: brightness(1.2); }
 
-        /* Swipe Indicator */
-        #swipeIndicator {
+        .seek-text-btn {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-border); 
+            color: white; padding: 12px 20px; border-radius: 50px; 
+            cursor: pointer; font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px;
+            transition: 0.2s;
+        }
+        .seek-text-btn:hover { background: rgba(255,255,255,0.2); border-color: #fff; transform: translateY(-2px); }
+
+        .speed-select {
+            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); 
+            color: white; padding: 10px 15px; border-radius: 15px; 
+            font-weight: 800; cursor: pointer; font-size: 0.75rem; outline: none;
+        }
+
+        .fs-action-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); color: white; cursor: pointer; font-size: 1rem; }
+
+        /* --- SEEKBAR SYSTEM --- */
+        .seekbar-box { width: 100%; padding: 0 10px; margin-bottom: 25px; }
+        #master-seekbar { 
+            width: 100%; height: 7px; border-radius: 10px; appearance: none; 
+            cursor: pointer; outline: none; background: rgba(255,255,255,0.15);
+        }
+        #master-seekbar::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 4px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+
+        /* --- TOAST SYSTEM --- */
+        #gesture-toast {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.7); padding: 12px 24px; border-radius: 30px;
-            font-size: 1rem; font-weight: bold; color: white; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 100;
+            background: var(--accent); color: white; padding: 20px 40px; border-radius: 60px;
+            font-weight: 900; font-size: 1.6rem; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 6000;
         }
 
-        /* --- FULLSCREEN ENHANCEMENTS --- */
-        .video-section:fullscreen { 
-            padding: 0; margin: 0;
-            width: 100vw; height: 100vh; 
-            background: #000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        
-        .video-section:fullscreen .player-container { 
-            width: 100%; height: 100%; border-radius: 0; 
-            display: flex; flex-direction: column; justify-content: center;
-        }
-
-        /* Uplifting the bar more in Fullscreen */
-        .video-section:fullscreen .custom-ui-wrapper { 
-            padding: 30px 30px 60px 30px; /* Increased bottom padding */
-            background: linear-gradient(transparent, rgba(0,0,0,0.4));
-        }
-
-        .sidebar { position: sticky; top: 80px; height: fit-content; order: 1; }
-        .chapter-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
-        .chapter-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 600; font-size: 0.85rem; color: #ffffff; }
-        .video-list { display: none; background: rgba(0,0,0,0.2); }
-        .video-item { padding: 10px 15px; cursor: pointer; font-size: 0.8rem; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); transition: 0.2s; }
-        .video-item:hover { background: var(--accent); color: white; }
-
-        @media (max-width: 768px) {
-            .main-layout { display: flex; flex-direction: column; }
-            .content-area { order: 1; }
-            .sidebar { order: 2; position: relative; top: 0; margin-top: 10px; }
-            .custom-ui-wrapper { opacity: 1; pointer-events: auto; background: rgba(0,0,0,0.6); }
+        /* --- RESPONSIVE ADAPTATIONS --- */
+        @media (max-width: 1024px) {
+            .dashboard-container { display: flex; flex-direction: column; padding: 0 15px; }
+            .sidebar-menu { order: 2; width: 100%; height: auto; position: relative; top: 0; }
+            .player-workspace { order: 1; }
+            
+            nav { width: 95%; gap: 12px; }
+            .logo-area { order: 1; }
+            .nav-actions { order: 2; }
+            .search-container { order: 3; max-width: 100%; width: 100%; margin: 5px 0 0 0; }
+            
+            .control-panel { padding: 20px 20px 30px 20px; }
+            .controls-row { gap: 12px; }
+            .main-play-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+            .seek-text-btn { padding: 10px 14px; font-size: 0.65rem; }
+            .seekbar-box { margin-bottom: 15px; }
         }
 
-        .active-list { display: block !important; }
-        .welcome-screen { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+        .hidden-el { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="ambient"></div>
+    <div class="ambient-layer"></div>
 
-    <nav id="navbar">
-        <a href="#" class="logo">FREE-EDU</a>
+    <nav id="top-nav">
+        <a href="#" class="logo-area">
+            <div class="logo-text">FREE-EDU</div>
+        </a>
+        <div class="search-container">
+            <input type="text" id="lesson-search" class="search-bar" placeholder="Search lessons or keywords..." onkeyup="performSearch()">
+        </div>
         <div class="nav-actions">
-            <button class="nav-btn" onclick="openModal('legalModal')">License</button>
-            <button class="nav-btn" onclick="openModal('aboutModal')">About</button>
+            <button class="nav-btn" onclick="openGlobalModal('license-modal')">License</button>
+            <button class="nav-btn" onclick="openGlobalModal('about-modal')">About</button>
         </div>
     </nav>
 
-    <div id="legalModal" class="modal"><div class="modal-content">
-        <h2 style="color: var(--accent); margin-bottom: 15px; font-family: 'Syncopate'; font-size: 1rem;">Terms & License</h2>
-        <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; font-size: 0.85rem; border: 1px solid var(--glass-border);">
-            <p style="color: var(--danger); font-weight: 700; margin-bottom: 5px;">🚫 Piracy Strictly Prohibited</p>
-            <p style="color: var(--text-dim); margin-bottom: 12px;">Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only.</p>
-            <p style="color: var(--success); font-weight: 700;">🤍 Open Access</p>
-            <p style="color: var(--text-dim);">Free to use, modify, and distribute educational content.</p>
+    <div id="license-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Terms of Use</h2>
+            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 25px; border: 1px solid var(--glass-border);">
+                <p style="color: var(--danger); font-weight: 800; margin-bottom: 10px;">🚫 STRICT NO DOWNLOAD POLICY</p>
+                <p>This portal is an educational aggregator. We do not host content; we provide a high-end interface for existing educational videos. Downloading or redistributing content from this UI is prohibited.</p>
+                <p style="color: var(--success); font-weight: 800; margin-top: 15px;">✓ FREE FOR STUDENTS</p>
+                <p>Academic access is 100% free and open-source.</p>
+            </div>
+            <button class="modal-close-btn" onclick="closeGlobalModal('license-modal')">I ACCEPT & ENTER</button>
         </div>
-        <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
-    </div></div>
+    </div>
 
-    <div id="aboutModal" class="modal"><div class="modal-content">
-        <h2 style="color: var(--accent); margin-bottom: 15px; font-family: 'Syncopate'; font-size: 1rem;">About Me</h2>
-        <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
-        <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
-    </div></div>
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>About Platform</h2>
+            <p>Developed to eliminate distractions and provide a focused learning experience for ICT and Honours students. We believe in high-quality, free education without boundaries.</p>
+            <p style="font-size: 0.8rem; opacity: 0.5;">Version 4.2.1 Stable (PC & Mobile Ready)</p>
+            <button class="modal-close-btn" onclick="closeGlobalModal('about-modal')">CLOSE</button>
+        </div>
+    </div>
 
-    <div class="main-layout">
-        <div class="content-area">
-            <div id="welcome" class="welcome-screen">
-                <h3>ICT Learning Portal</h3>
-                <p style="font-size: 0.8rem; margin-top: 10px;">Select a lesson from the chapters below.</p>
+    <div class="dashboard-container">
+        <aside class="sidebar-menu" id="content-sidebar">
+            <div class="chapter-card" data-keywords="introduction basics global village ict">
+                <div class="chapter-header" onclick="collapseToggle('ch1')">
+                    <h3>01. ICT Foundations</h3>
+                    <span>▼</span>
+                </div>
+                <div id="ch1" class="lesson-list">
+                    <div class="lesson-item" onclick="prepareVideo('tqJOtuOV3hw', 'Introduction to Information Tech', this)">Lesson 01: ICT Overview</div>
+                    <div class="lesson-item" onclick="prepareVideo('Xz26aND-LS4', 'Global Village Concept', this)">Lesson 02: Global Village</div>
+                    <div class="lesson-item" onclick="prepareVideo('dQw4w9WgXcQ', 'Virtual Reality Trends', this)">Lesson 03: VR/AR in ICT</div>
+                </div>
             </div>
 
-            <div id="playerSection" class="video-section">
-                <div class="video-meta-top">
-                    <span id="vidTitle"></span>
-                    <a id="sourceLink" href="#" target="_blank" class="source-tag">Source: <span id="channelName">Loading...</span></a>
+            <div class="chapter-card" data-keywords="networking topology communication protocol">
+                <div class="chapter-header" onclick="collapseToggle('ch2')">
+                    <h3>02. Networking Systems</h3>
+                    <span>▼</span>
                 </div>
-                <div class="player-container" id="pContainer">
-                    <div id="main-player"></div>
-                    <div id="swipeIndicator">0:00</div>
+                <div id="ch2" class="lesson-list">
+                    <div class="lesson-item" onclick="prepareVideo('3QhU9jd03a0', 'Network Topology Guide', this)">Lesson 01: Topologies</div>
+                    <div class="lesson-item" onclick="prepareVideo('qz0aGYrrlhU', 'Data Communication Media', this)">Lesson 02: Media Channels</div>
+                    <div class="lesson-item" onclick="prepareVideo('1PnVor36_40', 'Cloud Computing Basics', this)">Lesson 03: Cloud Services</div>
+                </div>
+            </div>
+
+            <div class="chapter-card" data-keywords="binary number system logic gates conversion">
+                <div class="chapter-header" onclick="collapseToggle('ch3')">
+                    <h3>03. Number Systems</h3>
+                    <span>▼</span>
+                </div>
+                <div id="ch3" class="lesson-list">
+                    <div class="lesson-item" onclick="prepareVideo('1PnVor36_40', 'Binary to Decimal Logic', this)">Lesson 01: Conversion</div>
+                    <div class="lesson-item" onclick="prepareVideo('tqJOtuOV3hw', 'Digital Logic Gates', this)">Lesson 02: Basic Gates</div>
+                </div>
+            </div>
+
+            <div class="chapter-card" data-keywords="web development html css coding">
+                <div class="chapter-header" onclick="collapseToggle('ch4')">
+                    <h3>04. Web Programming</h3>
+                    <span>▼</span>
+                </div>
+                <div id="ch4" class="lesson-list">
+                    <div class="lesson-item" onclick="prepareVideo('qz0aGYrrlhU', 'HTML Structure & Tags', this)">Lesson 01: HTML Basics</div>
+                    <div class="lesson-item" onclick="prepareVideo('3QhU9jd03a0', 'CSS Layouts & Flexbox', this)">Lesson 02: CSS Design</div>
+                </div>
+            </div>
+
+            <div class="chapter-card" data-keywords="economics math physics science">
+                <div class="chapter-header" onclick="collapseToggle('ch5')">
+                    <h3>05. Honours Faculty</h3>
+                    <span>▼</span>
+                </div>
+                <div id="ch5" class="lesson-list">
+                    <div class="lesson-item" onclick="prepareVideo('dQw4w9WgXcQ', 'Advanced Economics', this)">Honours: Economics</div>
+                    <div class="lesson-item" onclick="prepareVideo('Xz26aND-LS4', 'Political Science Intro', this)">Honours: Pol Science</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="player-workspace">
+            <div id="initial-hero" class="empty-state">
+                <h2 style="color: white; margin-bottom: 12px;">Start Learning</h2>
+                <p>Choose a chapter from the sidebar or use the search box to find a specific lesson.</p>
+            </div>
+
+            <div id="active-player-ui" class="video-player-wrapper">
+                <div class="video-info-bar">
+                    <span id="display-title">Loading Lesson Title...</span>
+                    <div class="creator-info">Academic Source: <a href="#" id="creator-name" target="_blank">YouTube Source</a></div>
+                </div>
+
+                <div class="video-container" id="interaction-zone" onclick="toggleControlsVisible()">
+                    <div id="youtube-engine"></div>
                     
-                    <div class="custom-ui-wrapper" id="customControls">
-                        <div class="seekbar-container">
-                            <input type="range" id="seekbar" value="0" step="0.1" onclick="event.stopPropagation()">
+                    <div id="gesture-toast">0:00</div>
+                    
+                    <div class="control-panel" id="main-hud">
+                        <div class="seekbar-box">
+                            <input type="range" id="master-seekbar" value="0" step="0.1" onclick="event.stopPropagation()">
                         </div>
-                        <div class="custom-ui">
-                            <select class="speed-select" onchange="player.setPlaybackRate(parseFloat(this.value)); event.stopPropagation();">
-                                <option value="1">1x</option>
+                        <div class="controls-row">
+                            <select class="speed-select" id="playback-speed" onchange="changeVideoSpeed(); event.stopPropagation();">
+                                <option value="1">1.0x</option>
                                 <option value="1.25">1.2x</option>
                                 <option value="1.5">1.5x</option>
-                                <option value="2">2x</option>
+                                <option value="2">2.0x</option>
                             </select>
-                            <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 10); event.stopPropagation();">-10</button>
-                            <button id="playPauseBtn" class="main-play-trigger" onclick="toggleVideo(event)">▶</button>
-                            <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 10); event.stopPropagation();">+10</button>
-                            <button class="control-btn" onclick="toggleFullscreen(event)">⛶</button>
+
+                            <button class="seek-text-btn" onclick="stepBackward(); event.stopPropagation();">-10 SEC</button>
+                            
+                            <button id="master-pp-btn" class="main-play-btn" onclick="handlePlayPause(event)">▶</button>
+                            
+                            <button class="seek-text-btn" onclick="stepForward(); event.stopPropagation();">+10 SEC</button>
+
+                            <button class="fs-action-btn" onclick="initFullscreen(event)">⛶</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="chapter-card">
-                <div class="chapter-header" onclick="toggleChapter('ch1')">অধ্যায়-১: আইসিটি পরিচিতি <span>▼</span></div>
-                <div id="ch1" class="video-list">
-                    <div class="video-item" onclick="loadVideo('tqJOtuOV3hw', 'Part 1: Introduction to ICT')">Part 1: Introduction</div>
-                    <div class="video-item" onclick="loadVideo('Xz26aND-LS4', 'Part 2: IT Concepts')">Part 2: IT Concepts</div>
-                </div>
-            </div>
-            <div class="chapter-card">
-                <div class="chapter-header" onclick="toggleChapter('ch2')">অধ্যায়-২: কমিউনিকেশন সিস্টেম <span>▼</span></div>
-                <div id="ch2" class="video-list">
-                    <div class="video-item" onclick="loadVideo('dQw4w9WgXcQ', 'Lesson 1: Communication Basics')">Lesson 1: Networking</div>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player, playing = false, seekInterval;
-        const seekbar = document.getElementById('seekbar');
-        const controlsWrapper = document.getElementById('customControls');
-        const container = document.getElementById('pContainer');
-        const swipeIndicator = document.getElementById('swipeIndicator');
+        /**
+         * GLOBAL PLAYER STATE
+         */
+        let mainPlayer;
+        let isVideoPlaying = false;
+        let progressUpdater;
+        let hudTimer;
+        
+        const seekbar = document.getElementById('master-seekbar');
+        const hud = document.getElementById('main-hud');
+        const toast = document.getElementById('gesture-toast');
 
+        /**
+         * YOUTUBE API INITIALIZATION
+         */
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('main-player', {
-                height: '100%', width: '100%',
-                playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'modestbranding': 1, 'iv_load_policy': 3, 'disablekb': 1 },
-                events: { 'onStateChange': onPlayerStateChange, 'onReady': onPlayerReady }
+            mainPlayer = new YT.Player('youtube-engine', {
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'disablekb': 1,
+                    'iv_load_policy': 3
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady
+                }
             });
         }
 
         function onPlayerReady() {
-            seekbar.addEventListener('input', updateSeek);
-            setupSwipeToSeek();
+            // Slider Interaction Logic
+            seekbar.addEventListener('input', () => {
+                const totalDuration = mainPlayer.getDuration();
+                const targetTime = totalDuration * (seekbar.value / 100);
+                mainPlayer.seekTo(targetTime);
+                refreshHudInactivity();
+            });
+
+            // Initialize Gesture Engine
+            attachGestureListeners();
         }
 
-        function updateSeek() {
-            const time = player.getDuration() * (seekbar.value / 100);
-            player.seekTo(time);
-            updateSeekbarColor(seekbar.value);
-        }
-
-        function updateSeekbarColor(val) {
-            seekbar.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${val}%, rgba(255,255,255,0.2) ${val}%, rgba(255,255,255,0.2) 100%)`;
-        }
-
+        /**
+         * STATE MANAGEMENT
+         */
         function onPlayerStateChange(event) {
-            const btn = document.getElementById('playPauseBtn');
+            const ppBtn = document.getElementById('master-pp-btn');
+            
             if (event.data == YT.PlayerState.PLAYING) {
-                btn.innerHTML = 'Ⅱ';
-                playing = true;
-                startTracking();
-            } else {
-                btn.innerHTML = '▶';
-                playing = false;
-                stopTracking();
-                controlsWrapper.classList.add('show-controls');
+                ppBtn.innerHTML = 'Ⅱ'; // Pause Icon
+                isVideoPlaying = true;
+                startTimeTracker();
+                refreshHudInactivity();
+            } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
+                ppBtn.innerHTML = '▶'; // Play Icon
+                isVideoPlaying = false;
+                stopTimeTracker();
+                showHud(); // Keep HUD visible when paused
             }
         }
 
-        function startTracking() {
-            seekInterval = setInterval(() => {
-                if(player && player.getDuration) {
-                    const val = (player.getCurrentTime() / player.getDuration()) * 100;
-                    seekbar.value = val || 0;
-                    updateSeekbarColor(val || 0);
+        /**
+         * HUD VISIBILITY ENGINE (UPLIFTED FOCUS)
+         */
+        function toggleControlsVisible() {
+            if (hud.classList.contains('visible')) {
+                hideHud();
+            } else {
+                showHud();
+                if (isVideoPlaying) refreshHudInactivity();
+            }
+        }
+
+        function showHud() {
+            hud.classList.add('visible');
+            clearTimeout(hudTimer);
+        }
+
+        function hideHud() {
+            if (isVideoPlaying) {
+                hud.classList.remove('visible');
+            }
+        }
+
+        function refreshHudInactivity() {
+            clearTimeout(hudTimer);
+            if (isVideoPlaying) {
+                hudTimer = setTimeout(hideHud, 3000); // 3-second auto-hide
+            }
+        }
+
+        /**
+         * PLAYBACK CORE ACTIONS
+         */
+        function handlePlayPause(e) {
+            e.stopPropagation();
+            if (isVideoPlaying) {
+                mainPlayer.pauseVideo();
+            } else {
+                mainPlayer.playVideo();
+            }
+        }
+
+        function stepBackward() {
+            const current = mainPlayer.getCurrentTime();
+            mainPlayer.seekTo(current - 10);
+            refreshHudInactivity();
+        }
+
+        function stepForward() {
+            const current = mainPlayer.getCurrentTime();
+            mainPlayer.seekTo(current + 10);
+            refreshHudInactivity();
+        }
+
+        function changeVideoSpeed() {
+            const speed = document.getElementById('playback-speed').value;
+            mainPlayer.setPlaybackRate(parseFloat(speed));
+        }
+
+        /**
+         * TRACKING ENGINE
+         */
+        function startTimeTracker() {
+            progressUpdater = setInterval(() => {
+                if (mainPlayer && mainPlayer.getDuration) {
+                    const current = mainPlayer.getCurrentTime();
+                    const total = mainPlayer.getDuration();
+                    const percentage = (current / total) * 100;
+                    
+                    seekbar.value = percentage || 0;
+                    // Dynamic Slider Fill
+                    seekbar.style.background = `linear-gradient(to right, var(--accent) ${percentage}%, rgba(255,255,255,0.15) ${percentage}%)`;
                 }
-            }, 500);
+            }, 400);
         }
 
-        function stopTracking() { clearInterval(seekInterval); }
-
-        function setupSwipeToSeek() {
-            let startX, startT, isSwiping = false;
-            container.addEventListener('pointerdown', (e) => {
-                startX = e.clientX;
-                startT = player.getCurrentTime();
-                isSwiping = true;
-            });
-            window.addEventListener('pointermove', (e) => {
-                if (!isSwiping) return;
-                const deltaX = e.clientX - startX;
-                if (Math.abs(deltaX) > 30) {
-                    const seekAmount = deltaX * 0.5;
-                    let newTime = startT + seekAmount;
-                    newTime = Math.max(0, Math.min(newTime, player.getDuration()));
-                    swipeIndicator.style.opacity = "1";
-                    swipeIndicator.innerText = (deltaX > 0 ? "» " : "« ") + formatTime(newTime);
-                    player.seekTo(newTime);
-                }
-            });
-            window.addEventListener('pointerup', () => {
-                isSwiping = false;
-                swipeIndicator.style.opacity = "0";
-            });
+        function stopTimeTracker() {
+            clearInterval(progressUpdater);
         }
 
-        function formatTime(s) {
-            let m = Math.floor(s / 60);
-            s = Math.floor(s % 60);
-            return m + ":" + (s < 10 ? "0" + s : s);
-        }
+        /**
+         * DYNAMIC CONTENT LOADING
+         */
+        async function prepareVideo(videoId, title, element) {
+            // UI Highlight
+            document.querySelectorAll('.lesson-item').forEach(item => item.classList.remove('active-playing'));
+            element.classList.add('active-playing');
 
-        async function loadVideo(id, title) {
-            document.getElementById('welcome').style.display = 'none';
-            document.getElementById('playerSection').style.display = 'block';
-            document.getElementById('vidTitle').innerText = title;
-            player.loadVideoById(id);
+            // Switch Section
+            document.getElementById('initial-hero').style.display = 'none';
+            document.getElementById('active-player-ui').classList.add('active');
+            document.getElementById('display-title').innerText = title;
+
+            // Engine Load
+            mainPlayer.loadVideoById(videoId);
+            showHud();
+
+            // Fetch Metadata
             try {
-                const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
-                const data = await res.json();
-                document.getElementById('channelName').innerText = data.author_name;
-                document.getElementById('sourceLink').href = data.author_url;
-            } catch (e) { document.getElementById('channelName').innerText = "YouTube"; }
+                const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                const data = await response.json();
+                document.getElementById('creator-name').innerText = data.author_name;
+                document.getElementById('creator-name').href = data.author_url;
+            } catch (err) {
+                document.getElementById('creator-name').innerText = "Premium Academic Source";
+            }
         }
 
-        function toggleVideo(e) {
-            if(e) e.stopPropagation();
-            if (playing) player.pauseVideo(); else player.playVideo();
-        }
+        /**
+         * SEARCH ENGINE (HONOURS STYLE)
+         */
+        function performSearch() {
+            const query = document.getElementById('lesson-search').value.toLowerCase();
+            const chapters = document.querySelectorAll('.chapter-card');
 
-        function toggleChapter(id) { document.getElementById(id).classList.toggle('active-list'); }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        function toggleFullscreen(e) {
-            if(e) e.stopPropagation();
-            const containerSect = document.getElementById('playerSection');
-            if (!document.fullscreenElement) {
-                if (containerSect.requestFullscreen) {
-                    containerSect.requestFullscreen().then(() => {
-                        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
-                    });
+            chapters.forEach(chapter => {
+                const keywords = chapter.getAttribute('data-keywords').toLowerCase();
+                const lessonTexts = chapter.querySelector('.lesson-list').innerText.toLowerCase();
+                
+                if (keywords.includes(query) || lessonTexts.includes(query)) {
+                    chapter.style.display = "block";
+                    // Auto expand if searching
+                    if (query.length > 1) {
+                        chapter.querySelector('.lesson-list').style.display = "block";
+                    }
+                } else {
+                    chapter.style.display = "none";
                 }
+            });
+        }
+
+        /**
+         * UTILITIES & GESTURES
+         */
+        function collapseToggle(id) {
+            const list = document.getElementById(id);
+            const isVisible = list.style.display === "block";
+            list.style.display = isVisible ? "none" : "block";
+        }
+
+        function openGlobalModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeGlobalModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = "auto";
+        }
+
+        function initFullscreen(e) {
+            e.stopPropagation();
+            const playerArea = document.getElementById('active-player-ui');
+            if (!document.fullscreenElement) {
+                playerArea.requestFullscreen().catch(err => {
+                    alert("Fullscreen not supported on this browser.");
+                });
             } else {
                 document.exitFullscreen();
             }
         }
+
+        function attachGestureListeners() {
+            let startX, startTime, isDragging = false;
+            const zone = document.getElementById('interaction-zone');
+
+            zone.addEventListener('pointerdown', (e) => {
+                startX = e.clientX;
+                startTime = mainPlayer.getCurrentTime();
+                isDragging = true;
+            });
+
+            window.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - startX;
+                
+                if (Math.abs(deltaX) > 60) {
+                    let newTime = startTime + (deltaX * 0.4); // Sensitivity
+                    newTime = Math.max(0, Math.min(newTime, mainPlayer.getDuration()));
+                    
+                    toast.style.opacity = "1";
+                    const minutes = Math.floor(newTime / 60);
+                    const seconds = Math.floor(newTime % 60);
+                    toast.innerText = (deltaX > 0 ? "SEEK » " : "SEEK « ") + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+                    
+                    mainPlayer.seekTo(newTime);
+                }
+            });
+
+            window.addEventListener('pointerup', () => {
+                isDragging = false;
+                toast.style.opacity = "0";
+            });
+        }
+
+        /**
+         * SMART NAV SCROLL
+         */
+        let lastPos = 0;
+        window.addEventListener('scroll', () => {
+            const currentPos = window.pageYOffset;
+            const nav = document.getElementById('top-nav');
+            
+            if (currentPos > lastPos && currentPos > 150) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastPos = currentPos;
+        });
+
     </script>
 </body>
 </html>
