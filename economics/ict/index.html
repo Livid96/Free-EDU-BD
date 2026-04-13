@@ -68,7 +68,7 @@
 
         /* Video Section Styling */
         .content-area { order: 2; }
-        .video-section { background: var(--card-bg); border-radius: 25px; border: 1px solid var(--glass-border); padding: 15px; display: none; }
+        .video-section { background: var(--card-bg); border-radius: 25px; border: 1px solid var(--glass-border); padding: 15px; display: none; position: relative; }
         .video-section.active { display: block; }
         
         .video-meta-top { margin-bottom: 10px; }
@@ -78,6 +78,7 @@
         .source-tag:hover #channelName { text-decoration: underline; }
 
         .player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; position: relative; }
+        #main-player { pointer-events: none; } 
 
         /* Sidebar Styling */
         .sidebar { position: sticky; top: 80px; height: fit-content; order: 1; }
@@ -88,10 +89,47 @@
         .video-item:hover { background: var(--accent); color: white; }
 
         /* Custom Player Controls */
-        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; padding: 15px 0; }
-        .main-play-trigger { width: 55px; height: 55px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 15px rgba(58, 134, 255, 0.2); }
-        .control-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 10px 15px; border-radius: 50px; cursor: pointer; font-size: 0.7rem; }
-        .speed-select { background: var(--accent); color: white; border: none; padding: 10px 12px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 0.7rem; outline: none; }
+        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 15px 0; transition: opacity 0.3s; }
+        
+        .main-play-trigger { width: 45px; height: 45px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(58, 134, 255, 0.2); }
+        
+        .control-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+        
+        .speed-select { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; width: 45px; height: 45px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.7rem; outline: none; text-align: center; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+
+        /* Fullscreen Overlay Style */
+        .video-section:fullscreen {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: #000;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .video-section:fullscreen .player-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 0; aspect-ratio: auto;
+        }
+
+        .video-section:fullscreen .custom-ui {
+            position: absolute;
+            bottom: 0; width: 100%;
+            background: rgba(0,0,0,0.25);
+            z-index: 10;
+            padding: 30px 10px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .video-section:fullscreen .custom-ui.show-fs-controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .video-section:fullscreen .video-meta-top { display: none; }
 
         @media (max-width: 768px) {
             .main-layout { display: flex; flex-direction: column; margin-top: 10px; }
@@ -99,8 +137,6 @@
             .sidebar { order: 2; position: relative; top: 0; margin-top: 10px; }
             nav { width: 95%; top: 5px; padding: 10px 15px; }
             .video-section { padding: 10px; border-radius: 20px; }
-            #vidTitle { font-size: 0.8rem; }
-            .main-play-trigger { width: 50px; height: 50px; font-size: 1.2rem; }
         }
 
         .active-list { display: block !important; }
@@ -142,23 +178,26 @@
                 <p style="font-size: 0.8rem; margin-top: 10px;">Select a lesson from the chapters below.</p>
             </div>
 
-            <div id="playerSection" class="video-section">
+            <div id="playerSection" class="video-section" onclick="toggleFsControls()">
                 <div class="video-meta-top">
                     <span id="vidTitle"></span>
                     <a id="sourceLink" href="#" target="_blank" class="source-tag">Source: <span id="channelName">Loading...</span></a>
                 </div>
                 <div class="player-container"><div id="main-player"></div></div>
                 
-                <div class="custom-ui">
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 10)">-10s</button>
-                    <button id="playPauseBtn" class="main-play-trigger" onclick="toggleVideo()">▶</button>
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 10)">+10s</button>
-                    <select class="speed-select" onchange="player.setPlaybackRate(parseFloat(this.value))">
-                        <option value="1">1x Speed</option>
-                        <option value="1.25">1.25x</option>
+                <div class="custom-ui" id="customControls">
+                    <select class="speed-select" onchange="player.setPlaybackRate(parseFloat(this.value)); event.stopPropagation();">
+                        <option value="1">1x</option>
+                        <option value="1.25">1.2x</option>
                         <option value="1.5">1.5x</option>
                         <option value="2">2x</option>
                     </select>
+                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 30); event.stopPropagation();">-30</button>
+                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 10); event.stopPropagation();">-10</button>
+                    <button id="playPauseBtn" class="main-play-trigger" onclick="toggleVideo(event)">▶</button>
+                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 10); event.stopPropagation();">+10</button>
+                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 30); event.stopPropagation();">+30</button>
+                    <button class="control-btn" onclick="toggleFullscreen(event)">⛶</button>
                 </div>
             </div>
         </div>
@@ -187,7 +226,14 @@
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('main-player', {
                 height: '100%', width: '100%',
-                playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'modestbranding': 1 },
+                playerVars: { 
+                    'autoplay': 0, 
+                    'controls': 0, 
+                    'rel': 0, 
+                    'modestbranding': 1,
+                    'iv_load_policy': 3,
+                    'disablekb': 1
+                },
                 events: { 'onStateChange': onPlayerStateChange }
             });
         }
@@ -211,7 +257,6 @@
             
             player.loadVideoById(id);
 
-            // Auto-fetch Channel Name and Link
             try {
                 const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
                 const data = await res.json();
@@ -226,7 +271,8 @@
             }
         }
 
-        function toggleVideo() {
+        function toggleVideo(e) {
+            if(e) e.stopPropagation();
             if (playing) player.pauseVideo();
             else player.playVideo();
         }
@@ -243,6 +289,33 @@
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
             document.body.style.overflow = 'auto';
+        }
+
+        function toggleFullscreen(e) {
+            if(e) e.stopPropagation();
+            const container = document.getElementById('playerSection');
+            
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().then(() => {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(err => console.log(err));
+                    }
+                }).catch(err => {
+                    console.log(err.message);
+                });
+            } else {
+                document.exitFullscreen();
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+        }
+
+        function toggleFsControls() {
+            if (document.fullscreenElement) {
+                const controls = document.getElementById('customControls');
+                controls.classList.toggle('show-fs-controls');
+            }
         }
     </script>
 </body>
