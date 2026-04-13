@@ -112,17 +112,23 @@
         .modal-content {
             background: #0a111a; border: 1px solid var(--glass-border);
             padding: 35px; border-radius: 30px; max-width: 550px; width: 100%; text-align: center;
+            transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .modal.active { display: flex; }
+        .modal.active .modal-content { transform: scale(1); opacity: 1; }
         .close-btn { margin-top: 25px; background: var(--accent); border: none; padding: 12px 30px; color: white; border-radius: 50px; cursor: pointer; width: 100%; font-weight: 700; }
 
-        /* --- MOBILE RESPONSIVENESS (2 COLUMNS) --- */
+        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
             nav { width: 95%; gap: 12px; padding: 15px; }
+            .logo { order: 1; }
+            .nav-actions { order: 2; }
             .search-container { order: 3; max-width: 100%; width: 100%; margin: 10px 0 0 0; }
+            .nav-btn { padding: 8px 10px; font-size: 0.6rem; }
+            
             .tab-btn { padding: 12px 18px; font-size: 0.8rem; }
             
-            /* Two columns on mobile */
+            /* Two columns on mobile as requested */
             .subject-grid { 
                 grid-template-columns: repeat(2, 1fr); 
                 gap: 12px; 
@@ -148,6 +154,27 @@
             <button class="nav-btn" onclick="openModal('aboutModal')">About</button>
         </div>
     </nav>
+
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">Terms & License</h2>
+            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                <p style="color: var(--danger); font-weight: 700; margin-bottom: 10px;">🚫 Piracy Strictly Prohibited</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px;">Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only.</p>
+                <p style="color: var(--success); font-weight: 700;">🤍 Open Access</p>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">Free to use, modify, and distribute educational content.</p>
+            </div>
+            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">About Me</h2>
+            <p style="color: var(--text-dim); line-height: 1.6;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
+            <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
+        </div>
+    </div>
 
     <div class="tabs-container">
         <button class="tab-btn active" onclick="showYear(1, this)">1st Year</button>
@@ -181,28 +208,8 @@
         </div>
     </div>
 
-    <div id="legalModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">Terms & License</h2>
-            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                <p style="color: var(--danger); font-weight: 700; margin-bottom: 10px;">🚫 Piracy Strictly Prohibited</p>
-                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px;">Downloading and piracy is strictly prohibited. This platform is 100% Free and Open Source for academic support only.</p>
-                <p style="color: var(--success); font-weight: 700;">🤍 Open Access</p>
-                <p style="color: var(--text-dim); font-size: 0.85rem;">Free to use, modify, and distribute educational content.</p>
-            </div>
-            <button class="close-btn" onclick="closeModal('legalModal')">I AGREE</button>
-        </div>
-    </div>
-
-    <div id="aboutModal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 1rem;">About Me</h2>
-            <p style="color: var(--text-dim); line-height: 1.6;">I am a student building open-source portals to make education accessible for everyone. No barriers, just learning.</p>
-            <button class="close-btn" onclick="closeModal('aboutModal')">CLOSE</button>
-        </div>
-    </div>
-
     <script>
+        // NAVIGATION SCROLL LOGIC
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', function() {
@@ -215,6 +222,7 @@
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
         });
 
+        // TABS LOGIC
         function showYear(yearNum, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -224,6 +232,7 @@
             document.getElementById('year' + yearNum).classList.remove('hidden');
         }
 
+        // SEARCH FILTER LOGIC
         function filterSubjects() {
             let input = document.getElementById('globalSearch').value.toLowerCase();
             document.querySelectorAll('.subject-card').forEach(card => {
@@ -232,8 +241,15 @@
             });
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+        // MODAL CONTROLS
+        function openModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            document.body.style.overflow = 'hidden'; 
+        }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            document.body.style.overflow = 'auto'; 
+        }
     </script>
 </body>
 </html>
