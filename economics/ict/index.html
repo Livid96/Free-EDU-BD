@@ -77,8 +77,8 @@
         #channelName { color: var(--accent); font-weight: 600; }
         .source-tag:hover #channelName { text-decoration: underline; }
 
-        .player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; position: relative; }
-        #main-player { pointer-events: none; } 
+        .player-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; position: relative; cursor: pointer; }
+        #main-player { pointer-events: none; width: 100%; height: 100%; } 
 
         /* Sidebar Styling */
         .sidebar { position: sticky; top: 80px; height: fit-content; order: 1; }
@@ -88,45 +88,57 @@
         .video-item { padding: 10px 15px; cursor: pointer; font-size: 0.8rem; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); transition: 0.2s; }
         .video-item:hover { background: var(--accent); color: white; }
 
-        /* Custom Player Controls */
-        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 15px 0; transition: opacity 0.3s; }
+        /* Custom Player Controls Wrapper - Now inside player-container */
+        .custom-ui-wrapper {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            z-index: 10;
+            padding: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        /* Show controls on hover/tap or when paused */
+        .player-container:hover .custom-ui-wrapper,
+        .custom-ui-wrapper.show-controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
         
-        .main-play-trigger { width: 45px; height: 45px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(58, 134, 255, 0.2); }
+        .custom-ui { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
         
-        .control-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+        .main-play-trigger { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); border: none; color: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
         
-        .speed-select { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; width: 45px; height: 45px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.7rem; outline: none; text-align: center; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+        .control-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
+        
+        .speed-select { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; width: 38px; height: 38px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 0.65rem; outline: none; text-align: center; -webkit-appearance: none; appearance: none; }
+
+        /* Seekbar Styling */
+        .seekbar-container { width: 100%; padding: 0 5px; margin-bottom: 5px; }
+        #seekbar { width: 100%; height: 4px; border-radius: 10px; background: rgba(255,255,255,0.3); appearance: none; cursor: pointer; outline: none; }
+        #seekbar::-webkit-slider-thumb { appearance: none; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); cursor: pointer; }
 
         /* Fullscreen Overlay Style */
         .video-section:fullscreen {
             padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: center;
             background: #000;
             width: 100vw;
             height: 100vh;
         }
         
         .video-section:fullscreen .player-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            width: 100%; height: 100%;
             border-radius: 0; aspect-ratio: auto;
         }
 
-        .video-section:fullscreen .custom-ui {
-            position: absolute;
-            bottom: 0; width: 100%;
+        .video-section:fullscreen .custom-ui-wrapper {
             background: rgba(0,0,0,0.25);
-            z-index: 10;
-            padding: 30px 10px;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .video-section:fullscreen .custom-ui.show-fs-controls {
-            opacity: 1;
-            pointer-events: auto;
+            padding: 30px 20px;
         }
 
         .video-section:fullscreen .video-meta-top { display: none; }
@@ -137,6 +149,7 @@
             .sidebar { order: 2; position: relative; top: 0; margin-top: 10px; }
             nav { width: 95%; top: 5px; padding: 10px 15px; }
             .video-section { padding: 10px; border-radius: 20px; }
+            .custom-ui-wrapper { opacity: 1; pointer-events: auto; background: rgba(0,0,0,0.4); } /* Keep visible on mobile for ease */
         }
 
         .active-list { display: block !important; }
@@ -178,26 +191,31 @@
                 <p style="font-size: 0.8rem; margin-top: 10px;">Select a lesson from the chapters below.</p>
             </div>
 
-            <div id="playerSection" class="video-section" onclick="toggleFsControls()">
+            <div id="playerSection" class="video-section">
                 <div class="video-meta-top">
                     <span id="vidTitle"></span>
                     <a id="sourceLink" href="#" target="_blank" class="source-tag">Source: <span id="channelName">Loading...</span></a>
                 </div>
-                <div class="player-container"><div id="main-player"></div></div>
-                
-                <div class="custom-ui" id="customControls">
-                    <select class="speed-select" onchange="player.setPlaybackRate(parseFloat(this.value)); event.stopPropagation();">
-                        <option value="1">1x</option>
-                        <option value="1.25">1.2x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2x</option>
-                    </select>
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 30); event.stopPropagation();">-30</button>
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 10); event.stopPropagation();">-10</button>
-                    <button id="playPauseBtn" class="main-play-trigger" onclick="toggleVideo(event)">▶</button>
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 10); event.stopPropagation();">+10</button>
-                    <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 30); event.stopPropagation();">+30</button>
-                    <button class="control-btn" onclick="toggleFullscreen(event)">⛶</button>
+                <div class="player-container" onclick="handleContainerClick()">
+                    <div id="main-player"></div>
+                    
+                    <div class="custom-ui-wrapper" id="customControls">
+                        <div class="seekbar-container">
+                            <input type="range" id="seekbar" value="0" step="0.1" onclick="event.stopPropagation()">
+                        </div>
+                        <div class="custom-ui">
+                            <select class="speed-select" onchange="player.setPlaybackRate(parseFloat(this.value)); event.stopPropagation();">
+                                <option value="1">1x</option>
+                                <option value="1.25">1.2x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="2">2x</option>
+                            </select>
+                            <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() - 10); event.stopPropagation();">-10</button>
+                            <button id="playPauseBtn" class="main-play-trigger" onclick="toggleVideo(event)">▶</button>
+                            <button class="control-btn" onclick="player.seekTo(player.getCurrentTime() + 10); event.stopPropagation();">+10</button>
+                            <button class="control-btn" onclick="toggleFullscreen(event)">⛶</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,7 +239,9 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player, playing = false;
+        let player, playing = false, seekInterval;
+        const seekbar = document.getElementById('seekbar');
+        const controlsWrapper = document.getElementById('customControls');
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('main-player', {
@@ -234,7 +254,17 @@
                     'iv_load_policy': 3,
                     'disablekb': 1
                 },
-                events: { 'onStateChange': onPlayerStateChange }
+                events: { 
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady 
+                }
+            });
+        }
+
+        function onPlayerReady() {
+            seekbar.addEventListener('input', (e) => {
+                const time = player.getDuration() * (seekbar.value / 100);
+                player.seekTo(time);
             });
         }
 
@@ -243,9 +273,35 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 btn.innerHTML = 'Ⅱ';
                 playing = true;
+                startTracking();
+                // Auto-hide controls after 3s on mobile
+                if(window.innerWidth <= 768) {
+                    setTimeout(() => controlsWrapper.style.opacity = "0", 3000);
+                }
             } else {
                 btn.innerHTML = '▶';
                 playing = false;
+                stopTracking();
+                controlsWrapper.classList.add('show-controls'); // Keep visible when paused
+            }
+        }
+
+        function startTracking() {
+            seekInterval = setInterval(() => {
+                if(player && player.getDuration) {
+                    const val = (player.getCurrentTime() / player.getDuration()) * 100;
+                    seekbar.value = val || 0;
+                }
+            }, 500);
+        }
+
+        function stopTracking() {
+            clearInterval(seekInterval);
+        }
+
+        function handleContainerClick() {
+            if(window.innerWidth <= 768 || document.fullscreenElement) {
+                controlsWrapper.style.opacity = controlsWrapper.style.opacity === "1" ? "0" : "1";
             }
         }
 
@@ -300,21 +356,12 @@
                     if (screen.orientation && screen.orientation.lock) {
                         screen.orientation.lock('landscape').catch(err => console.log(err));
                     }
-                }).catch(err => {
-                    console.log(err.message);
-                });
+                }).catch(err => console.log(err.message));
             } else {
                 document.exitFullscreen();
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock();
                 }
-            }
-        }
-
-        function toggleFsControls() {
-            if (document.fullscreenElement) {
-                const controls = document.getElementById('customControls');
-                controls.classList.toggle('show-fs-controls');
             }
         }
     </script>
